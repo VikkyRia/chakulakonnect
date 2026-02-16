@@ -1,35 +1,50 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
-import './App.css'
+import { useEffect } from 'react';
+import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
+import Landing from './pages/Landing';
+import Registration from './pages/Registration';
+import Login from './pages/Login';
+import Dashboard from './pages/Dashboard';
+import { getAllUsers } from './utils/auth';
+import './App.css';
 
 function App() {
-  const [count, setCount] = useState(0)
+  // Initialize demo user on app load
+  useEffect(() => {
+    // Check if users already exist in localStorage
+    const users = getAllUsers();
+    
+    // If no users exist, add a demo user for testing
+    if (users.length === 0) {
+      const demoUser = {
+        fullName: 'Demo User',
+        email: 'demo@example.com',
+        password: 'demo123',
+        role: 'Consumer'
+      };
+      localStorage.setItem('users', JSON.stringify([demoUser]));
+    }
+  }, []);
 
   return (
-    <>
-      <div>
-        <a href="https://vite.dev" target="_blank">
-          <img src={viteLogo} className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://react.dev" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
-      </div>
-      <h1>Vite + React</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.jsx</code> and save to test HMR
-        </p>
-      </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
-    </>
-  )
+    <Router>
+      <Routes>
+        {/* Landing page - default route */}
+        <Route path="/" element={<Landing />} />
+
+        {/* Registration page */}
+        <Route path="/register" element={<Registration />} />
+        
+        {/* Login page */}
+        <Route path="/login" element={<Login />} />
+        
+        {/* Dashboard page */}
+        <Route path="/dashboard" element={<Dashboard />} />
+        
+        {/* Catch-all for undefined routes */}
+        <Route path="*" element={<Navigate to="/login" replace />} />
+      </Routes>
+    </Router>
+  );
 }
 
-export default App
+export default App;
