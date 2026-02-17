@@ -1,0 +1,20 @@
+{
+  "name": "chakulakonnect",
+  "version": "1.0.0",
+  "description": "A Digital Platform for Affordable, Nutritious Food Access and Farmer Market Linkages",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/VikkyRia/chakulakonnect.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/VikkyRia/chakulakonnect/issues"
+  },
+  "homepage": "https://github.com/VikkyRia/chakulakonnect#readme"
+}
