@@ -1,6 +1,9 @@
 {
   "name": "backend",
   "version": "1.0.0",
+  "engines": {
+  "node": ">=16.0.0"
+},
   "description": "Node.js/Express REST API with PostgreSQL",
   "main": "server.js",
   "scripts": {
