@@ -1,6 +1,9 @@
 const { Sequelize } = require('sequelize');
 require('dotenv').config();
 
+// Determine if SSL is needed (for cloud databases like Neon)
+const isProduction = process.env.NODE_ENV === 'production';
+
 // Create database connection
 const sequelize = new Sequelize(
   process.env.DB_NAME,
@@ -10,7 +13,13 @@ const sequelize = new Sequelize(
     host: process.env.DB_HOST,
     port: process.env.DB_PORT,
     dialect: 'postgres',
-    logging: false, // Set to console.log to see SQL queries
+    dialectOptions: isProduction ? {
+      ssl: {
+        require: true,
+        rejectUnauthorized: false
+      }
+    } : {},
+    logging: false,
     pool: {
       max: 5,
       min: 0,
