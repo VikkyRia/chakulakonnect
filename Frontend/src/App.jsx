@@ -5,6 +5,8 @@ import Registration from './pages/Registration';
 import Login from './pages/Login';
 import Dashboard from './pages/Dashboard';
 import VerifyIdentity from './pages/VerifyIdentity';
+import ConsumerDashboard from './pages/ConsumerDashboard';
+import SellerDashboard from './pages/SellerDashboard';
 import { getAllUsers } from './utils/auth';
 import './App.css';
 
@@ -13,7 +15,7 @@ function App() {
   useEffect(() => {
     // Check if users already exist in localStorage
     const users = getAllUsers();
-    
+
     // If no users exist, add a demo user for testing
     if (users.length === 0) {
       const demoUser = {
@@ -36,13 +38,15 @@ function App() {
         <Route path="/register" element={<Registration />} />
         {/* Verify Identity page */}
         <Route path="/verify" element={<VerifyIdentity />} />
-        
+
         {/* Login page */}
         <Route path="/login" element={<Login />} />
-        
-        {/* Dashboard page */}
+
+        {/* Dashboard pages */}
         <Route path="/dashboard" element={<Dashboard />} />
-        
+        <Route path="/consumer-dashboard" element={<ConsumerDashboard />} />
+        <Route path="/seller-dashboard" element={<SellerDashboard />} />
+
         {/* Catch-all for undefined routes */}
         <Route path="*" element={<Navigate to="/login" replace />} />
       </Routes>
