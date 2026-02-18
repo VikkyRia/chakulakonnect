@@ -3,7 +3,7 @@ import loginImg from '../assets/image/login.png';
 import testImg from '../assets/image/tomatoes.png';
 import logo from '../assets/image/SVG.png';
 import { useNavigate } from 'react-router-dom';
-import { loginUser } from '../utils/auth';
+import api from '../utils/api';
 import { Mail, Lock, Eye } from 'lucide-react';
 import colorgoogle from '../assets/image/colorgoogle.png';
 import facebook from '../assets/image/facebook.png';
@@ -20,6 +20,7 @@ function Login() {
 
   // State for login error message
   const [errorMessage, setErrorMessage] = useState('');
+  const [isLoading, setIsLoading] = useState(false);
 
   // Hook to navigate to different pages
   const navigate = useNavigate();
@@ -64,6 +65,7 @@ function Login() {
   // Handle form submission
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setErrorMessage('');
 
     // Validate form
     const newErrors = validateForm();
@@ -72,26 +74,32 @@ function Login() {
       return;
     }
 
+    setIsLoading(true);
+
     try {
-      const res = await fetch('/api/auth/login', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          email: formData.email,
-          password: formData.password
-        })
+      const res = await api.post('/api/auth/login', {
+        email: formData.email,
+        password: formData.password
       });
-      const data = await res.json();
-      if (res.status === 200 && data.success) {
+
+      if (res.data.success) {
         // Store user and token in localStorage
-        localStorage.setItem('currentUser', JSON.stringify(data.data.user));
-        localStorage.setItem('token', data.data.token);
-        navigate('/dashboard');
-      } else {
-        setErrorMessage(data.message || 'Login failed');
+        const { user, token } = res.data.data;
+        localStorage.setItem('currentUser', JSON.stringify(user));
+        localStorage.setItem('token', token);
+
+        // Redirect based on userType
+        if (user.userType === 'seller') {
+          navigate('/seller-dashboard');
+        } else {
+          navigate('/consumer-dashboard');
+        }
       }
     } catch (err) {
-      setErrorMessage('Login failed. Please try again.');
+      const errorMsg = err.response?.data?.message || err.message || 'Login failed. Please try again.';
+      setErrorMessage(errorMsg);
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -156,7 +164,20 @@ function Login() {
               </div>
               <button type="button" className="text-green-600 text-sm font-medium hover:underline">Forgot password?</button>
             </div>
-            <button type="submit" className="w-full bg-green-600 hover:bg-green-700 text-white font-medium py-2 rounded-lg transition">Sign in</button>
+            <button
+              type="submit"
+              disabled={isLoading}
+              className={`w-full bg-green-600 hover:bg-green-700 text-white font-medium py-2 rounded-lg transition flex items-center justify-center gap-2 ${isLoading ? 'opacity-70 cursor-not-allowed' : ''}`}
+            >
+              {isLoading ? (
+                <>
+                  <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
+                  <span>Signing in...</span>
+                </>
+              ) : (
+                'Sign in'
+              )}
+            </button>
           </form>
           <div className="my-6 text-center text-gray-500">or continue with</div>
           <div className="flex gap-4 mb-6">
@@ -176,7 +197,7 @@ function Login() {
         </div>
         {/* Right: Image/Quote Section */}
         <div className="hidden md:block w-1/2 relative">
-          <img src={loginImg} alt="Login Visual" className="absolute inset-0 w-full h-full object-cover rounded-r-2xl" style={{objectFit: 'cover', width: '100%', height: '100%'}} />
+          <img src={loginImg} alt="Login Visual" className="absolute inset-0 w-full h-full object-cover rounded-r-2xl" style={{ objectFit: 'cover', width: '100%', height: '100%' }} />
           {/* Community Initials - styled as in screenshot */}
           <div className="absolute bottom-10 left-10 flex items-center z-10">
             <div className="flex -space-x-3">

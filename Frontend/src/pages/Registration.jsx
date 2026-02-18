@@ -2,8 +2,8 @@ import { useState } from 'react';
 import registerImg from '../assets/image/register.png';
 import logo from '../assets/image/SVG.png';
 import { useNavigate } from 'react-router-dom';
-import { registerUser } from '../utils/auth';
-import { Mail, Lock, Eye, User, MapPin } from 'lucide-react';
+import api from '../utils/api';
+import { Mail, Lock, Eye, User, MapPin, Phone, ChevronDown, Users } from 'lucide-react';
 import smilingImg from '../assets/image/smiling.png';
 import darkgoogle from '../assets/image/darkgoogle.png';
 import facebook from '../assets/image/facebook.png';
@@ -25,9 +25,13 @@ function Registration() {
 
   // State for form errors
   const [errors, setErrors] = useState({});
-  
+
   // State for displaying registration message
   const [message, setMessage] = useState('');
+
+  // State for loading and global errors
+  const [isLoading, setIsLoading] = useState(false);
+  const [apiError, setApiError] = useState('');
 
   // Hook to navigate to different pages
   const navigate = useNavigate();
@@ -102,6 +106,8 @@ function Registration() {
   // Handle form submission
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setMessage('');
+    setApiError('');
 
     // Validate form
     const newErrors = validateForm();
@@ -109,6 +115,8 @@ function Registration() {
       setErrors(newErrors);
       return;
     }
+
+    setIsLoading(true);
 
     // Prepare payload
     const payload = {
@@ -125,22 +133,26 @@ function Registration() {
     };
 
     try {
-      const res = await fetch('/api/auth/register', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(payload)
-      });
-      const data = await res.json();
-      if (res.status === 201 && data.success) {
+      const res = await api.post('/api/auth/register', payload);
+      console.log(res)
+
+      if (res.status === 201 || res.status === 200) {
         setMessage('Registration successful! Redirecting to verification...');
-        setTimeout(() => {
-          navigate('/verify', { state: { email: formData.email } });
-        }, 1000);
-      } else {
-        setMessage(data.message || 'Registration failed');
+        // Redirect based on userType
+        if (res.data.data.user.userType === 'seller') {
+          navigate('/seller-dashboard');
+        } else {
+          navigate('/consumer-dashboard');
+        }
+        // setTimeout(() => {
+        //   navigate('/verify', { state: { email: formData.email } });
+        // }, 1500);
       }
     } catch (err) {
-      setMessage('Registration failed. Please try again.');
+      const errorMessage = err.response?.data?.message || err.message || 'Registration failed. Please try again.';
+      setApiError(errorMessage);
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -161,19 +173,33 @@ function Registration() {
           </div>
           <h1 className="text-3xl font-bold text-gray-900 mb-2">Create your account</h1>
           <p className="text-gray-600 mb-6">Join the fresh revolution in Nigeria today.</p>
-          {/* Tabs */}
-          <div className="flex mb-6 bg-gray-100 rounded-lg overflow-hidden">
-            <button className={`flex-1 px-4 py-2 font-semibold text-sm ${formData.userType === 'consumer' ? 'bg-white text-gray-900' : 'text-gray-500'}`} onClick={() => setFormData({ ...formData, userType: 'consumer' })}>Consumer</button>
-            <button className={`flex-1 px-4 py-2 font-semibold text-sm ${formData.userType === 'seller' ? 'bg-white text-gray-900' : 'text-gray-500'}`} onClick={() => setFormData({ ...formData, userType: 'seller' })}>Seller</button>
+          {/* Account Type Selection (Dropdown) */}
+          <div className="relative mb-6">
+            <span className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400">
+              <Users size={18} className="lucide-user" />
+            </span>
+            <select
+              name="userType"
+              value={formData.userType}
+              onChange={handleChange}
+              className="w-full pl-10 pr-10 py-2 border border-gray-300 rounded-lg appearance-none focus:outline-none focus:ring-2 focus:ring-green-500 bg-white text-gray-900 font-medium"
+            >
+              <option value="consumer">Consumer (Buy Fresh Produce)</option>
+              <option value="seller">Seller (Sell Fresh Produce)</option>
+            </select>
+            <span className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 pointer-events-none">
+              <ChevronDown size={18} />
+            </span>
           </div>
           {/* Error/Success Message */}
           {message && (
-            <div className={`mb-4 p-3 rounded text-center ${
-              message.includes('successful') 
-                ? 'bg-green-100 text-green-700' 
-                : 'bg-red-100 text-red-700'
-            }`}>
+            <div className="mb-4 p-3 rounded text-center bg-green-100 text-green-700">
               {message}
+            </div>
+          )}
+          {apiError && (
+            <div className="mb-4 p-3 rounded text-center bg-red-100 text-red-700">
+              {apiError}
             </div>
           )}
           {/* Registration Form */}
@@ -208,6 +234,20 @@ function Registration() {
             {errors.email && <p className="text-red-500 text-sm mt-1">{errors.email}</p>}
             <div className="relative">
               <span className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400">
+                <Phone size={18} />
+              </span>
+              <input
+                type="tel"
+                name="phoneNumber"
+                value={formData.phoneNumber}
+                onChange={handleChange}
+                placeholder="Phone Number"
+                className={`w-full pl-10 pr-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500 ${errors.phoneNumber ? 'border-red-500' : 'border-gray-300'}`}
+              />
+            </div>
+            {errors.phoneNumber && <p className="text-red-500 text-sm mt-1">{errors.phoneNumber}</p>}
+            <div className="relative">
+              <span className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400">
                 <MapPin size={18} />
               </span>
               <input
@@ -220,6 +260,40 @@ function Registration() {
               />
             </div>
             {errors.location && errors.location.address && <p className="text-red-500 text-sm mt-1">{errors.location.address}</p>}
+            <div className="flex gap-4">
+              <div className="w-1/2">
+                <div className="relative">
+                  <span className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400">
+                    <MapPin size={18} />
+                  </span>
+                  <input
+                    type="text"
+                    name="city"
+                    value={formData.location.city}
+                    onChange={handleChange}
+                    placeholder="City"
+                    className={`w-full pl-10 pr-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500 ${(errors.location && errors.location.city) ? 'border-red-500' : 'border-gray-300'}`}
+                  />
+                </div>
+                {errors.location && errors.location.city && <p className="text-red-500 text-sm mt-1">{errors.location.city}</p>}
+              </div>
+              <div className="w-1/2">
+                <div className="relative">
+                  <span className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400">
+                    <MapPin size={18} />
+                  </span>
+                  <input
+                    type="text"
+                    name="state"
+                    value={formData.location.state}
+                    onChange={handleChange}
+                    placeholder="State"
+                    className={`w-full pl-10 pr-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500 ${(errors.location && errors.location.state) ? 'border-red-500' : 'border-gray-300'}`}
+                  />
+                </div>
+                {errors.location && errors.location.state && <p className="text-red-500 text-sm mt-1">{errors.location.state}</p>}
+              </div>
+            </div>
             <div className="relative">
               <span className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400">
                 <Lock size={18} />
@@ -241,7 +315,20 @@ function Registration() {
               <input type="checkbox" className="mr-2" required />
               <span className="text-sm text-gray-700">I agree to the <a href="#" className="text-green-600 underline">Terms and Privacy Policy</a>.</span>
             </div>
-            <button type="submit" className="w-full bg-green-600 hover:bg-green-700 text-white font-medium py-2 rounded-lg transition">Create Account</button>
+            <button
+              type="submit"
+              disabled={isLoading}
+              className={`w-full bg-green-600 hover:bg-green-700 text-white font-medium py-2 rounded-lg transition flex items-center justify-center gap-2 ${isLoading ? 'opacity-70 cursor-not-allowed' : ''}`}
+            >
+              {isLoading ? (
+                <>
+                  <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
+                  <span>Creating Account...</span>
+                </>
+              ) : (
+                'Create Account'
+              )}
+            </button>
           </form>
           <div className="my-6 text-center text-gray-500">or continue with</div>
           <div className="flex gap-4 mb-6">
@@ -261,7 +348,7 @@ function Registration() {
         </div>
         {/* Right: Image/Quote Section */}
         <div className="hidden md:block w-1/2 relative">
-          <img src={registerImg} alt="Registration Visual" className="absolute inset-0 w-full h-full object-cover rounded-r-2xl" style={{objectFit: 'cover', width: '100%', height: '100%'}} />
+          <img src={registerImg} alt="Registration Visual" className="absolute inset-0 w-full h-full object-cover rounded-r-2xl" style={{ objectFit: 'cover', width: '100%', height: '100%' }} />
           <div className="absolute bottom-10 left-10 right-10">
             <div className="bg-white/80 rounded-xl p-6 shadow-lg flex flex-col gap-3">
               <div className="flex items-center gap-1 mb-2">

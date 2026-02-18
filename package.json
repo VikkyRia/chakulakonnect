@@ -16,5 +16,8 @@
   "bugs": {
     "url": "https://github.com/VikkyRia/chakulakonnect/issues"
   },
-  "homepage": "https://github.com/VikkyRia/chakulakonnect#readme"
+  "homepage": "https://github.com/VikkyRia/chakulakonnect#readme",
+  "dependencies": {
+    "axios": "^1.13.5"
+  }
 }
