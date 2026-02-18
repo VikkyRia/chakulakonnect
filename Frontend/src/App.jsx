@@ -4,6 +4,7 @@ import Landing from './pages/Landing';
 import Registration from './pages/Registration';
 import Login from './pages/Login';
 import Dashboard from './pages/Dashboard';
+import VerifyIdentity from './pages/VerifyIdentity';
 import { getAllUsers } from './utils/auth';
 import './App.css';
 
@@ -33,6 +34,8 @@ function App() {
 
         {/* Registration page */}
         <Route path="/register" element={<Registration />} />
+        {/* Verify Identity page */}
+        <Route path="/verify" element={<VerifyIdentity />} />
         
         {/* Login page */}
         <Route path="/login" element={<Login />} />
