@@ -158,7 +158,7 @@ function Registration() {
 
   return (
     <div className="min-h-screen bg-gray-50 flex items-center justify-center">
-      <div className="w-full max-w-5xl bg-white rounded-2xl shadow-xl flex overflow-hidden">
+      <div className="w-full max-w-6xl bg-white rounded-2xl shadow-xl flex overflow-hidden">
         {/* Left: Form Section (centered, max-w-md) */}
         <div className="w-full md:w-1/2 p-18 flex flex-col justify-center">
           {/* Branding */}
@@ -218,34 +218,45 @@ function Registration() {
               />
             </div>
             {errors.fullName && <p className="text-red-500 text-sm mt-1">{errors.fullName}</p>}
-            <div className="relative">
-              <span className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400">
-                <Mail size={18} />
-              </span>
-              <input
-                type="email"
-                name="email"
-                value={formData.email}
-                onChange={handleChange}
-                placeholder="Email Address"
-                className={`w-full pl-10 pr-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500 ${errors.email ? 'border-red-500' : 'border-gray-300'}`}
-              />
+            {/* start email */}
+            <div className="flex gap-4">
+              <div>
+                <div className="relative">
+                  <span className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400">
+                    <Mail size={18} />
+                  </span>
+                  <input
+                    type="email"
+                    name="email"
+                    value={formData.email}
+                    onChange={handleChange}
+                    placeholder="Email Address"
+                    className={`w-full pl-10 pr-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500 ${errors.email ? 'border-red-500' : 'border-gray-300'}`}
+                  />
+                </div>
+                {errors.email && <p className="text-red-500 text-sm mt-1">{errors.email}</p>}
+              </div>
+              {/* end email */}
+              {/* start phone number */}
+              <div>
+                <div className="relative">
+                  <span className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400">
+                    <Phone size={18} />
+                  </span>
+                  <input
+                    type="tel"
+                    name="phoneNumber"
+                    value={formData.phoneNumber}
+                    onChange={handleChange}
+                    placeholder="Phone Number"
+                    className={`w-full pl-10 pr-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500 ${errors.phoneNumber ? 'border-red-500' : 'border-gray-300'}`}
+                  />
+                </div>
+                {errors.phoneNumber && <p className="text-red-500 text-sm mt-1">{errors.phoneNumber}</p>}
+              </div>
             </div>
-            {errors.email && <p className="text-red-500 text-sm mt-1">{errors.email}</p>}
-            <div className="relative">
-              <span className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400">
-                <Phone size={18} />
-              </span>
-              <input
-                type="tel"
-                name="phoneNumber"
-                value={formData.phoneNumber}
-                onChange={handleChange}
-                placeholder="Phone Number"
-                className={`w-full pl-10 pr-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500 ${errors.phoneNumber ? 'border-red-500' : 'border-gray-300'}`}
-              />
-            </div>
-            {errors.phoneNumber && <p className="text-red-500 text-sm mt-1">{errors.phoneNumber}</p>}
+            {/* end phone number */}
+            {/* start address */}
             <div className="relative">
               <span className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400">
                 <MapPin size={18} />
