@@ -1,15 +1,28 @@
+import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { isAuthenticated, getCurrentUser, logoutUser } from '../utils/auth';
 import logo from '../assets/image/SVG.png';
 
 function ConsumerDashboard() {
     const navigate = useNavigate();
-    const user = JSON.parse(localStorage.getItem('currentUser') || '{}');
+    const [user, setUser] = useState(null);
+    const [loading, setLoading] = useState(true);
+
+    useEffect(() => {
+        if (!isAuthenticated()) {
+            navigate('/login');
+            return;
+        }
+        setUser(getCurrentUser());
+        setLoading(false);
+    }, [navigate]);
 
     const handleLogout = () => {
-        localStorage.removeItem('currentUser');
-        localStorage.removeItem('token');
+        logoutUser();
         navigate('/login');
     };
+
+    if (loading) return <div className="min-h-screen flex items-center justify-center bg-gray-50 uppercase text-xs font-bold text-gray-400">Loading Dashboard...</div>;
 
     return (
         <div className="min-h-screen bg-gray-50 p-6">

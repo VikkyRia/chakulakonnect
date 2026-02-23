@@ -1,5 +1,6 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { isAuthenticated, getCurrentUser, logoutUser } from '../utils/auth';
 import {
     LayoutDashboard,
     Box,
@@ -23,14 +24,27 @@ import logo from '../assets/image/SVG.png';
 
 function SellerDashboard() {
     const navigate = useNavigate();
-    const user = JSON.parse(localStorage.getItem('currentUser') || '{"fullName": "Musa Ibrahim", "userType": "seller"}');
+    const [user, setUser] = useState(null);
     const [activeTab, setActiveTab] = useState('Dashboard');
+    const [loading, setLoading] = useState(true);
+
+    useEffect(() => {
+        if (!isAuthenticated()) {
+            navigate('/login');
+            return;
+        }
+        const currentUser = getCurrentUser();
+        // Fallback for demo if users logic is bypassed
+        setUser(currentUser || JSON.parse(localStorage.getItem('currentUser') || '{"fullName": "Musa Ibrahim", "userType": "seller"}'));
+        setLoading(false);
+    }, [navigate]);
 
     const handleLogout = () => {
-        localStorage.removeItem('currentUser');
-        localStorage.removeItem('token');
+        logoutUser();
         navigate('/login');
     };
+
+    if (loading) return <div className="min-h-screen flex items-center justify-center bg-[#F9FAFB]"><div className="w-8 h-8 border-4 border-[#22C55E] border-t-transparent rounded-full animate-spin"></div></div>;
 
     const navItems = [
         { name: 'Dashboard', icon: LayoutDashboard },
@@ -71,10 +85,10 @@ function SellerDashboard() {
                         <button
                             key={item.name}
                             onClick={() => setActiveTab(item.name)}
-                            className={`w-full flex items-center gap-3 px-4 py-3.5 rounded-2xl transition-all duration-200 group ${activeTab === item.name
-                                ? 'bg-[#22C55E] text-white shadow-xl shadow-green-100'
-                                : 'text-gray-500 hover:bg-gray-50'
-                                }`}
+                            className={`w - full flex items - center gap - 3 px - 4 py - 3.5 rounded - 2xl transition - all duration - 200 group ${activeTab === item.name
+                                    ? 'bg-[#22C55E] text-white shadow-xl shadow-green-100'
+                                    : 'text-gray-500 hover:bg-gray-50'
+                                } `}
                         >
                             <item.icon size={20} className={activeTab === item.name ? 'text-white' : 'text-gray-400 group-hover:text-[#22C55E]'} />
                             <span className="font-semibold text-sm">{item.name}</span>
@@ -140,12 +154,12 @@ function SellerDashboard() {
                         {statCards.map((card, idx) => (
                             <div key={idx} className="bg-white p-6 rounded-[28px] shadow-sm border border-gray-100 flex flex-col relative group hover:shadow-xl hover:border-green-50 transition-all duration-300">
                                 <div className="flex items-center justify-between mb-5">
-                                    <div className={`${card.bg} ${card.color} p-3.5 rounded-2xl shadow-sm group-hover:scale-110 transition-transform`}>
+                                    <div className={`${card.bg} ${card.color} p - 3.5 rounded - 2xl shadow - sm group - hover: scale - 110 transition - transform`}>
                                         <card.icon size={22} />
                                     </div>
-                                    <div className={`text-[10px] font-extrabold px-2.5 py-1 rounded-full uppercase tracking-wider ${card.change.includes('+') ? 'bg-green-50 text-green-600' :
-                                        card.change === 'High' ? 'bg-orange-50 text-orange-600' : 'bg-blue-50 text-blue-600'
-                                        }`}>
+                                    <div className={`text - [10px] font - extrabold px - 2.5 py - 1 rounded - full uppercase tracking - wider ${card.change.includes('+') ? 'bg-green-50 text-green-600' :
+                                            card.change === 'High' ? 'bg-orange-50 text-orange-600' : 'bg-blue-50 text-blue-600'
+                                        } `}>
                                         {card.change}
                                     </div>
                                 </div>
@@ -182,7 +196,7 @@ function SellerDashboard() {
                                                 <td className="px-4 py-5 text-sm font-bold text-gray-700 border-t border-gray-50">{order.product}</td>
                                                 <td className="px-4 py-5 text-sm text-gray-500 font-bold border-t border-gray-50">{order.quantity}</td>
                                                 <td className="px-4 py-5 text-center border-t border-gray-50">
-                                                    <span className={`inline-block px-3.5 py-1.5 rounded-full text-[9px] font-black uppercase tracking-wider shadow-sm ${order.statusColor}`}>
+                                                    <span className={`inline - block px - 3.5 py - 1.5 rounded - full text - [9px] font - black uppercase tracking - wider shadow - sm ${order.statusColor} `}>
                                                         {order.status}
                                                     </span>
                                                 </td>
@@ -273,17 +287,17 @@ function SellerDashboard() {
 
             <style dangerouslySetInnerHTML={{
                 __html: `
-                @keyframes scan {
-                    from { transform: translateY(-100%); }
-                    to { transform: translateY(500%); }
-                }
-                .animate-scan {
-                    animation: scan 3s linear infinite;
-                }
+@keyframes scan {
+                    from { transform: translateY(-100 %); }
+                    to { transform: translateY(500 %); }
+}
+                .animate - scan {
+    animation: scan 3s linear infinite;
+}
                 body {
-                    font-family: 'Inter', system-ui, -apple-system, sans-serif;
-                }
-            `}} />
+    font - family: 'Inter', system - ui, -apple - system, sans - serif;
+}
+`}} />
         </div>
     );
 }
