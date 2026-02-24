@@ -7,6 +7,13 @@ import Dashboard from './pages/Dashboard';
 import VerifyIdentity from './pages/VerifyIdentity';
 import ConsumerDashboard from './pages/ConsumerDashboard';
 import SellerDashboard from './pages/SellerDashboard';
+import Catalog from './pages/Catalog';
+import AddProduct from './pages/AddProduct';
+import ProfileSettings from './pages/ProfileSettings';
+import MyListings from './pages/MyListings';
+import BudgetHelper from './pages/BudgetHelper';
+import SalesForecast from './pages/SalesForecast';
+import AIChatbot from './components/AIChatbot';
 import { getAllUsers } from './utils/auth';
 import './App.css';
 
@@ -47,9 +54,25 @@ function App() {
         <Route path="/consumer-dashboard" element={<ConsumerDashboard />} />
         <Route path="/seller-dashboard" element={<SellerDashboard />} />
 
+        {/* Marketplace Catalog */}
+        <Route path="/categories" element={<Catalog />} />
+
+        {/* Product Management */}
+        <Route path="/add-product" element={<AddProduct />} />
+        <Route path="/my-listings" element={<MyListings />} />
+
+        {/* AI Features */}
+        <Route path="/budget-helper" element={<BudgetHelper />} />
+        <Route path="/sales-forecast" element={<SalesForecast />} />
+
+        {/* User Settings */}
+        <Route path="/settings" element={<ProfileSettings />} />
+        <Route path="/seller-profile" element={<ProfileSettings />} />
+
         {/* Catch-all for undefined routes */}
         <Route path="*" element={<Navigate to="/login" replace />} />
       </Routes>
+      <AIChatbot />
     </Router>
   );
 }
