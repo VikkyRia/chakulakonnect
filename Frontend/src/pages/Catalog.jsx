@@ -19,7 +19,8 @@ import {
     Heart,
     Plus,
     Clock,
-    Zap
+    Zap,
+    Sparkles
 } from 'lucide-react';
 import logo from '../assets/image/SVG.png';
 
@@ -133,18 +134,30 @@ function Catalog() {
                     {/* Auth/Actions */}
                     <div className="flex items-center gap-6 shrink-0">
                         {user ? (
-                            <button
-                                onClick={() => navigate(user.userType === 'seller' ? '/seller-dashboard' : '/consumer-dashboard')}
-                                className="flex items-center gap-3 bg-emerald-50 px-5 py-2.5 rounded-2xl border border-emerald-100 group hover:bg-emerald-500 transition-all"
-                            >
-                                <div className="w-8 h-8 rounded-xl bg-emerald-500 flex items-center justify-center text-white font-black text-xs group-hover:bg-white group-hover:text-emerald-500 transition-colors">
-                                    {user.fullName?.[0]}
-                                </div>
-                                <span className="text-xs font-black uppercase tracking-widest text-emerald-700 group-hover:text-white transition-colors hidden sm:block">Dashboard</span>
-                            </button>
+                            <div className="flex items-center gap-3">
+                                <button
+                                    onClick={() => navigate('/budget-helper')}
+                                    className="hidden md:flex items-center gap-2 bg-slate-900 px-5 py-2.5 rounded-2xl text-white hover:bg-emerald-600 transition-all shadow-lg shadow-slate-200"
+                                >
+                                    <Sparkles size={16} className="text-emerald-400" />
+                                    <span className="text-[10px] font-black uppercase tracking-[0.15em]">Recommend for me</span>
+                                </button>
+                                <button
+                                    onClick={() => navigate(user.userType === 'seller' ? '/seller-dashboard' : '/consumer-dashboard')}
+                                    className="flex items-center gap-3 bg-emerald-50 px-5 py-2.5 rounded-2xl border border-emerald-100 group hover:bg-emerald-500 transition-all"
+                                >
+                                    <div className="w-8 h-8 rounded-xl bg-emerald-500 flex items-center justify-center text-white font-black text-xs group-hover:bg-white group-hover:text-emerald-500 transition-colors">
+                                        {user.fullName?.[0]}
+                                    </div>
+                                    <span className="text-xs font-black uppercase tracking-widest text-emerald-700 group-hover:text-white transition-colors hidden sm:block">Dashboard</span>
+                                </button>
+                            </div>
                         ) : (
-                            <>
-                                <button onClick={() => navigate('/login')} className="text-sm font-black text-slate-500 hover:text-slate-900 uppercase tracking-widest transition-colors hidden sm:block">
+                            <div className="flex items-center gap-4">
+                                <button
+                                    onClick={() => navigate('/login')}
+                                    className="text-sm font-black text-slate-500 hover:text-slate-900 uppercase tracking-widest transition-colors"
+                                >
                                     Login
                                 </button>
                                 <button
@@ -154,7 +167,7 @@ function Catalog() {
                                     Get Started
                                     <ChevronRight size={16} className="group-hover:translate-x-1 transition-transform" />
                                 </button>
-                            </>
+                            </div>
                         )}
                     </div>
                 </div>

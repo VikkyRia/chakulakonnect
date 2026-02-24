@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
+import api from '../utils/api';
 import { isAuthenticated, getCurrentUser, logoutUser } from '../utils/auth';
 import {
     ShoppingBag,
@@ -17,7 +18,8 @@ import {
     LayoutDashboard,
     ArrowUpRight,
     Wallet,
-    X
+    X,
+    Sparkles
 } from 'lucide-react';
 import logo from '../assets/image/SVG.png';
 
@@ -109,9 +111,11 @@ function ConsumerDashboard() {
                     {[
                         { icon: LayoutDashboard, label: 'Dashboard', active: true },
                         { icon: ShoppingBag, label: 'Marketplace', onClick: () => navigate('/categories') },
+                        { icon: Sparkles, label: 'AI Budget Helper', onClick: () => navigate('/budget-helper') },
                         { icon: History, label: 'Order History' },
                         { icon: Heart, label: 'Favorites' },
                         { icon: MapPin, label: 'Track Orders' },
+                        { icon: Settings, label: 'Settings', onClick: () => navigate('/settings') }
                     ].map((item, idx) => (
                         <button
                             key={idx}

@@ -122,11 +122,11 @@ function SellerDashboard() {
                 <nav className="flex-1 px-6 space-y-2 mt-4">
                     {[
                         { icon: LayoutDashboard, label: 'Dashboard', active: true },
-                        { icon: Box, label: 'My Listings' },
+                        { icon: Box, label: 'My Listings', onClick: () => navigate('/my-listings') },
                         { icon: ShoppingCart, label: 'Order Hub' },
-                        { icon: BarChart3, label: 'Analytics' },
+                        { icon: Sparkles, label: 'AI Forecast', onClick: () => navigate('/sales-forecast') },
                         { icon: Bell, label: 'Market Alerts' },
-                        { icon: Settings, label: 'Settings', onClick: () => navigate('/seller-profile') }
+                        { icon: Settings, label: 'Settings', onClick: () => navigate('/settings') }
                     ].map((item, idx) => (
                         <button
                             key={idx}

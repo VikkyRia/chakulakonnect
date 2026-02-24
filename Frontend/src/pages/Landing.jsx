@@ -9,6 +9,7 @@ import havestImg from '../assets/image/havest.png';
 import smilingImg from '../assets/image/smiling.png';
 import imgImg from '../assets/image/Img.png';
 import youngImg from '../assets/image/Young.png';
+import farmerImg from '../assets/image/farmer.png';
 
 function Landing() {
   const navigate = useNavigate();
@@ -110,7 +111,10 @@ function Landing() {
                 <button onClick={() => navigate('/categories')} className="px-6 py-3 bg-green-600 hover:bg-green-700 text-white rounded-lg font-semibold transition flex items-center justify-center gap-2">
                   Shop Marketplace <ChevronRight size={20} />
                 </button>
-                <button className="px-6 py-3 border-2 border-gray-800 text-gray-800 rounded-lg font-semibold hover:bg-gray-50 transition">
+                <button
+                  onClick={() => navigate('/register')}
+                  className="px-6 py-3 border-2 border-gray-800 text-gray-800 rounded-lg font-semibold hover:bg-gray-50 transition"
+                >
                   Join as Seller
                 </button>
               </div>
@@ -129,7 +133,7 @@ function Landing() {
             {/* Right Image */}
             <div className="flex justify-center items-stretch">
               <div className="relative w-full">
-                <img src="/farmer.png" alt="Farmer" className="w-full h-full rounded-2xl object-cover" />
+                <img src={farmerImg} alt="Farmer" className="w-full h-full rounded-2xl object-cover" />
 
                 <div className="absolute bottom-4 left-4 bg-white rounded-lg shadow-lg" style={{ width: '544px', height: '82px' }}>
                   <div className="flex items-center gap-4 p-4 h-full">
