@@ -7,6 +7,9 @@ import Dashboard from './pages/Dashboard';
 import VerifyIdentity from './pages/VerifyIdentity';
 import ConsumerDashboard from './pages/ConsumerDashboard';
 import SellerDashboard from './pages/SellerDashboard';
+import Catalog from './pages/Catalog';
+import AddProduct from './pages/AddProduct';
+import SellerProfile from './pages/SellerProfile';
 import { getAllUsers } from './utils/auth';
 import './App.css';
 
@@ -46,6 +49,15 @@ function App() {
         <Route path="/dashboard" element={<Dashboard />} />
         <Route path="/consumer-dashboard" element={<ConsumerDashboard />} />
         <Route path="/seller-dashboard" element={<SellerDashboard />} />
+
+        {/* Marketplace Catalog */}
+        <Route path="/categories" element={<Catalog />} />
+
+        {/* Product Management */}
+        <Route path="/add-product" element={<AddProduct />} />
+
+        {/* User Settings */}
+        <Route path="/seller-profile" element={<SellerProfile />} />
 
         {/* Catch-all for undefined routes */}
         <Route path="*" element={<Navigate to="/login" replace />} />

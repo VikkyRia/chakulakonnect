@@ -1,4 +1,6 @@
 import { useNavigate } from 'react-router-dom';
+import { useState, useEffect } from 'react';
+import { isAuthenticated, getCurrentUser } from '../utils/auth';
 import { ChevronRight, Leaf, Users, Sprout, ArrowRight, Search, CheckCircle } from 'lucide-react';
 import logo from '../assets/image/SVG.png';
 import priceImg from '../assets/image/price.png';
@@ -10,6 +12,11 @@ import youngImg from '../assets/image/Young.png';
 
 function Landing() {
   const navigate = useNavigate();
+  const [user, setUser] = useState(null);
+
+  useEffect(() => {
+    setUser(getCurrentUser());
+  }, []);
 
   const features = [
     { icon: <div className="mx-auto mb-4 w-12 h-12 rounded-full flex items-center justify-center bg-green-100/70 border border-green-200 shadow-sm"><img src={priceImg} alt="Predictive Sourcing" className="w-6 h-6 opacity-80" /></div>, title: 'Predictive Sourcing', desc: ' Our AI predicts demand to ensure sellers only provide what is needed, reducing waste by 40%.' },
@@ -49,22 +56,33 @@ function Landing() {
           </div>
 
           <div className="hidden md:flex items-center gap-8">
-            <a href="/marketplace" className="text-gray-800 font-medium text-sm hover:text-green-600">Buy Marketplace</a>
-            <a href="/sellers" className="text-gray-800 font-medium text-sm hover:text-green-600">Our sellers</a>
-            <a href="/about" className="text-gray-800 font-medium text-sm hover:text-green-600">About Chakulakonnect</a>
+            <button onClick={() => navigate('/categories')} className="text-gray-800 font-medium text-sm hover:text-green-600">Buy Marketplace</button>
+            <button onClick={() => navigate('/sellers')} className="text-gray-800 font-medium text-sm hover:text-green-600">Our sellers</button>
+            <button onClick={() => navigate('/about')} className="text-gray-800 font-medium text-sm hover:text-green-600">About Chakulakonnect</button>
           </div>
 
           <div className="flex items-center gap-4">
-            <div className="hidden md:flex items-center gap-2 bg-gray-100 rounded-lg px-3 py-2" style={{width: '256px', height: '38px'}}>
+            <div className="hidden md:flex items-center gap-2 bg-gray-100 rounded-lg px-3 py-2" style={{ width: '256px', height: '38px' }}>
               <Search size={18} className="text-gray-500" />
               <input type="text" placeholder="Search products..." className="bg-gray-100 outline-none text-sm text-gray-700 placeholder-gray-500 flex-1" />
             </div>
-            <button onClick={() => navigate('/login')} className="text-gray-700 text-sm font-medium hover:text-gray-900">
-              Login
-            </button>
-            <button onClick={() => navigate('/register')} className="px-4 py-2 bg-green-600 hover:bg-green-700 text-white text-sm font-medium rounded-lg transition">
-              Get Started
-            </button>
+            {user ? (
+              <button
+                onClick={() => navigate(user.userType === 'seller' ? '/seller-dashboard' : '/consumer-dashboard')}
+                className="px-4 py-2 bg-green-600 hover:bg-green-700 text-white text-sm font-medium rounded-lg transition"
+              >
+                Dashboard
+              </button>
+            ) : (
+              <>
+                <button onClick={() => navigate('/login')} className="text-gray-700 text-sm font-medium hover:text-gray-900">
+                  Login
+                </button>
+                <button onClick={() => navigate('/register')} className="px-4 py-2 bg-green-600 hover:bg-green-700 text-white text-sm font-medium rounded-lg transition">
+                  Get Started
+                </button>
+              </>
+            )}
           </div>
         </div>
       </nav>
@@ -89,7 +107,7 @@ function Landing() {
               </p>
 
               <div className="flex flex-col sm:flex-row gap-3">
-                <button onClick={() => navigate('/register')} className="px-6 py-3 bg-green-600 hover:bg-green-700 text-white rounded-lg font-semibold transition flex items-center justify-center gap-2">
+                <button onClick={() => navigate('/categories')} className="px-6 py-3 bg-green-600 hover:bg-green-700 text-white rounded-lg font-semibold transition flex items-center justify-center gap-2">
                   Shop Marketplace <ChevronRight size={20} />
                 </button>
                 <button className="px-6 py-3 border-2 border-gray-800 text-gray-800 rounded-lg font-semibold hover:bg-gray-50 transition">
@@ -112,8 +130,8 @@ function Landing() {
             <div className="flex justify-center items-stretch">
               <div className="relative w-full">
                 <img src="/farmer.png" alt="Farmer" className="w-full h-full rounded-2xl object-cover" />
-                
-                <div className="absolute bottom-4 left-4 bg-white rounded-lg shadow-lg" style={{width: '544px', height: '82px'}}>
+
+                <div className="absolute bottom-4 left-4 bg-white rounded-lg shadow-lg" style={{ width: '544px', height: '82px' }}>
                   <div className="flex items-center gap-4 p-4 h-full">
                     <CheckCircle size={32} className="text-green-600 shrink-0" />
                     <div className="flex flex-col justify-center">
@@ -250,9 +268,12 @@ function Landing() {
           </div>
 
           <div className="text-center mt-8">
-            <a href="#" className="text-green-600 hover:text-green-700 font-semibold text-sm flex items-center justify-center gap-1 underline decoration-green-600 underline-offset-4">
+            <button
+              onClick={() => navigate('/categories')}
+              className="text-green-600 hover:text-green-700 font-semibold text-sm flex items-center justify-center gap-1 underline decoration-green-600 underline-offset-4"
+            >
               Browse Full Marketplace <ChevronRight size={16} />
-            </a>
+            </button>
           </div>
         </div>
       </div>
@@ -311,7 +332,7 @@ function Landing() {
             <div>
               <h4 className="font-semibold text-gray-900 mb-4">Ecosystem</h4>
               <ul className="space-y-2 text-sm text-gray-700">
-                <li><a href="/marketplace" className="hover:text-green-600">Marketplace</a></li>
+                <li><button onClick={() => navigate('/categories')} className="hover:text-green-600">Marketplace</button></li>
                 <li><a href="/seller-network" className="hover:text-green-600">Seller Network</a></li>
                 <li><a href="/ai-freshness-tracker" className="hover:text-green-600">AI Freshness Tracker</a></li>
               </ul>

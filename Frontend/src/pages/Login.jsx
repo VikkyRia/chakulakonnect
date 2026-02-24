@@ -18,8 +18,9 @@ function Login() {
   // State for form errors
   const [errors, setErrors] = useState({});
 
-  // State for login error message
   const [errorMessage, setErrorMessage] = useState('');
+  const [successMessage, setSuccessMessage] = useState('');
+  const [showPassword, setShowPassword] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
 
   // Hook to navigate to different pages
@@ -88,12 +89,17 @@ function Login() {
         localStorage.setItem('currentUser', JSON.stringify(user));
         localStorage.setItem('token', token);
 
-        // Redirect based on userType
-        if (user.userType === 'seller') {
-          navigate('/seller-dashboard');
-        } else {
-          navigate('/consumer-dashboard');
-        }
+        // Show welcome message
+        setSuccessMessage(`Welcome back, ${user.fullName}!`);
+
+        // Redirect based on userType after a short delay to see the message
+        setTimeout(() => {
+          if (user.userType === 'seller') {
+            navigate('/seller-dashboard');
+          } else {
+            navigate('/consumer-dashboard');
+          }
+        }, 1500);
       }
     } catch (err) {
       const errorMsg = err.response?.data?.message || err.message || 'Login failed. Please try again.';
@@ -122,7 +128,16 @@ function Login() {
           <p className="text-gray-600 mb-6">Welcome back! Please enter your details to access your account.</p>
           {/* Error Message */}
           {errorMessage && (
-            <div className="mb-4 p-3 rounded bg-red-100 text-red-700 text-center">{errorMessage}</div>
+            <div className="mb-4 p-4 rounded-xl bg-red-50 border border-red-100 text-red-700 text-sm font-bold flex items-center justify-center gap-2 animate-shake">
+              <span className="w-1.5 h-1.5 bg-red-500 rounded-full animate-pulse"></span>
+              {errorMessage}
+            </div>
+          )}
+          {successMessage && (
+            <div className="mb-4 p-4 rounded-xl bg-emerald-50 border border-emerald-100 text-emerald-700 text-sm font-black flex items-center justify-center gap-2 animate-bounce-subtle">
+              <span className="w-1.5 h-1.5 bg-emerald-500 rounded-full animate-ping"></span>
+              {successMessage}
+            </div>
           )}
           {/* Login Form */}
           <form onSubmit={handleSubmit} className="space-y-4">
@@ -145,15 +160,18 @@ function Login() {
                 <Lock size={18} />
               </span>
               <input
-                type="password"
+                type={showPassword ? "text" : "password"}
                 name="password"
                 value={formData.password}
                 onChange={handleChange}
                 placeholder="Password"
                 className={`w-full pl-10 pr-10 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500 ${errors.password ? 'border-red-500' : 'border-gray-300'}`}
               />
-              <span className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 cursor-pointer">
-                <Eye size={18} />
+              <span
+                className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 cursor-pointer hover:text-green-600 transition-colors"
+                onClick={() => setShowPassword(!showPassword)}
+              >
+                {showPassword ? <Eye size={18} className="text-green-600" /> : <Eye size={18} />}
               </span>
             </div>
             {errors.password && <p className="text-red-500 text-sm mt-1">{errors.password}</p>}

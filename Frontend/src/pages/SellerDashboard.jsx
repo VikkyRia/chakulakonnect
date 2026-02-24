@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
+import api from '../utils/api';
 import { isAuthenticated, getCurrentUser, logoutUser } from '../utils/auth';
 import {
     LayoutDashboard,
@@ -18,14 +19,25 @@ import {
     MapPin,
     LogOut,
     User,
-    Search
+    Search,
+    Clock,
+    ArrowUpRight,
+    Settings,
+    MoreHorizontal,
+    Zap
 } from 'lucide-react';
 import logo from '../assets/image/SVG.png';
 
 function SellerDashboard() {
     const navigate = useNavigate();
     const [user, setUser] = useState(null);
-    const [activeTab, setActiveTab] = useState('Dashboard');
+    const [stats, setStats] = useState({
+        totalListings: 0,
+        availableListings: 0,
+        outOfStockListings: 0,
+        surplusListings: 0,
+        totalQuantity: 0
+    });
     const [loading, setLoading] = useState(true);
 
     useEffect(() => {
@@ -33,10 +45,34 @@ function SellerDashboard() {
             navigate('/login');
             return;
         }
-        const currentUser = getCurrentUser();
-        // Fallback for demo if users logic is bypassed
-        setUser(currentUser || JSON.parse(localStorage.getItem('currentUser') || '{"fullName": "Musa Ibrahim", "userType": "seller"}'));
-        setLoading(false);
+
+        const fetchData = async () => {
+            try {
+                // Fetch real profile from backend
+                const profileRes = await api.get('/api/users/me');
+                if (profileRes.data.success) {
+                    const userData = profileRes.data.data.user;
+                    setUser(userData);
+                    localStorage.setItem('currentUser', JSON.stringify(userData));
+                } else {
+                    const currentUser = getCurrentUser();
+                    setUser(currentUser || { fullName: 'Musa Ibrahim', userType: 'seller' });
+                }
+
+                const response = await api.get('/api/foods/seller/my-listings');
+                if (response.data.success) {
+                    setStats(response.data.data.stats);
+                }
+            } catch (error) {
+                console.error("Error fetching seller data:", error);
+                const currentUser = getCurrentUser();
+                setUser(currentUser || { fullName: 'Musa Ibrahim', userType: 'seller' });
+            } finally {
+                setLoading(false);
+            }
+        };
+
+        fetchData();
     }, [navigate]);
 
     const handleLogout = () => {
@@ -44,163 +80,174 @@ function SellerDashboard() {
         navigate('/login');
     };
 
-    if (loading) return <div className="min-h-screen flex items-center justify-center bg-[#F9FAFB]"><div className="w-8 h-8 border-4 border-[#22C55E] border-t-transparent rounded-full animate-spin"></div></div>;
-
-    const navItems = [
-        { name: 'Dashboard', icon: LayoutDashboard },
-        { name: 'Inventory', icon: Box },
-        { name: 'Orders', icon: ShoppingCart },
-        { name: 'Analytics', icon: BarChart3 },
-        { name: 'Market Alerts', icon: Bell },
-    ];
+    if (loading) {
+        return (
+            <div className="min-h-screen flex items-center justify-center bg-[#F8FAFC]">
+                <div className="flex flex-col items-center gap-4">
+                    <div className="w-12 h-12 border-4 border-emerald-100 border-t-emerald-500 rounded-full animate-spin"></div>
+                    <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest animate-pulse">Initializing Seller Hub...</p>
+                </div>
+            </div>
+        );
+    }
 
     const statCards = [
-        { title: 'Total Sales', value: '₦458,200', change: '+12.5%', icon: DollarSign, color: 'text-green-600', bg: 'bg-green-100' },
-        { title: 'Total Orders', value: '124', change: '+8', icon: Package, color: 'text-blue-600', bg: 'bg-blue-100' },
-        { title: 'Demand Score', value: '88/100', change: 'High', icon: TrendingUp, color: 'text-orange-600', bg: 'bg-orange-100' },
-        { title: 'Waste Saved', value: '1.2 Tons', change: 'Impact', icon: Leaf, color: 'text-emerald-600', bg: 'bg-emerald-100' },
+        { title: 'Total Listings', value: stats.totalListings, change: '+12%', icon: Package, color: 'text-blue-600', bg: 'bg-blue-50' },
+        { title: 'In Stock', value: stats.availableListings, change: 'Optimal', icon: Zap, color: 'text-emerald-600', bg: 'bg-emerald-50' },
+        { title: 'Surplus Stock', value: stats.surplusListings, change: 'Urgent', icon: Leaf, color: 'text-orange-600', bg: 'bg-orange-50' },
+        { title: 'Total Sales', value: '₦142K', change: '+24%', icon: DollarSign, color: 'text-indigo-600', bg: 'bg-indigo-50' },
     ];
 
     const recentOrders = [
-        { id: '#ORD-2841', product: 'Fresh Tomatoes', quantity: '50 kg', status: 'Delivered', date: 'Oct 24, 2023', statusColor: 'bg-green-100 text-green-700' },
+        { id: '#ORD-2841', product: 'Fresh Tomatoes', quantity: '50 kg', status: 'Delivered', date: 'Oct 24, 2023', statusColor: 'bg-emerald-100 text-emerald-700' },
         { id: '#ORD-2845', product: 'Sweet Potatoes', quantity: '120 kg', status: 'Shipped', date: 'Oct 25, 2023', statusColor: 'bg-blue-100 text-blue-700' },
         { id: '#ORD-2848', product: 'Red Onions', quantity: '200 kg', status: 'Pending', date: 'Oct 25, 2023', statusColor: 'bg-orange-100 text-orange-700' },
     ];
 
     return (
-        <div className="flex min-h-screen bg-[#F9FAFB] text-gray-900 font-sans">
-            {/* Sidebar */}
-            <aside className="w-64 bg-white border-r border-gray-100 flex flex-col h-screen sticky top-0 hidden lg:flex">
-                <div className="p-8 flex items-center gap-3">
-                    <div className="bg-[#22C55E] p-1.5 rounded-lg shadow-sm">
-                        <img src={logo} alt="Logo" className="w-5 h-5 invert brightness-0" />
+        <div className="min-h-screen bg-[#F8FAFC] flex flex-col lg:flex-row">
+            {/* Sidebar - Same as Consumer for Consistency */}
+            <aside className="hidden lg:flex w-72 flex-col bg-white border-r border-slate-200/60 sticky top-0 h-screen">
+                <div className="p-8">
+                    <div className="flex items-center gap-2.5">
+                        <div className="bg-emerald-500 p-2 rounded-xl shadow-lg shadow-emerald-100">
+                            <img src={logo} alt="Logo" className="w-5 h-5 invert brightness-0" />
+                        </div>
+                        <span className="text-xl font-black tracking-tight text-slate-900">
+                            Chakula<span className="text-emerald-500">Konnect</span>
+                        </span>
                     </div>
-                    <span className="text-xl font-bold tracking-tight text-gray-800">
-                        Chakula<span className="text-[#22C55E]">Konnect</span>
-                    </span>
                 </div>
 
-                <nav className="flex-1 px-4 mt-2 space-y-1">
-                    {navItems.map((item) => (
+                <nav className="flex-1 px-6 space-y-2 mt-4">
+                    {[
+                        { icon: LayoutDashboard, label: 'Dashboard', active: true },
+                        { icon: Box, label: 'My Listings' },
+                        { icon: ShoppingCart, label: 'Order Hub' },
+                        { icon: BarChart3, label: 'Analytics' },
+                        { icon: Bell, label: 'Market Alerts' },
+                        { icon: Settings, label: 'Settings', onClick: () => navigate('/seller-profile') }
+                    ].map((item, idx) => (
                         <button
-                            key={item.name}
-                            onClick={() => setActiveTab(item.name)}
-                            className={`w - full flex items - center gap - 3 px - 4 py - 3.5 rounded - 2xl transition - all duration - 200 group ${activeTab === item.name
-                                    ? 'bg-[#22C55E] text-white shadow-xl shadow-green-100'
-                                    : 'text-gray-500 hover:bg-gray-50'
-                                } `}
+                            key={idx}
+                            onClick={item.onClick}
+                            className={`w-full flex items-center gap-4 px-4 py-3.5 rounded-2xl font-bold text-sm transition-all ${item.active ? 'bg-emerald-50 text-emerald-600' : 'text-slate-400 hover:bg-slate-50 hover:text-slate-900'}`}
                         >
-                            <item.icon size={20} className={activeTab === item.name ? 'text-white' : 'text-gray-400 group-hover:text-[#22C55E]'} />
-                            <span className="font-semibold text-sm">{item.name}</span>
+                            <item.icon size={20} strokeWidth={item.active ? 2.5 : 2} />
+                            {item.label}
                         </button>
                     ))}
                 </nav>
 
-                <div className="p-6 mt-auto">
-                    <div className="bg-gray-50 rounded-[24px] p-4 flex items-center gap-3 border border-gray-100 hover:border-green-200 transition-colors cursor-pointer group">
-                        <div className="w-10 h-10 bg-green-100 rounded-full flex items-center justify-center text-green-700 font-extrabold shadow-sm">
-                            {user.fullName?.split(' ').map(n => n[0]).join('') || 'MI'}
-                        </div>
-                        <div className="flex-1 min-w-0">
-                            <p className="text-[13px] font-bold text-gray-900 truncate">{user.fullName}</p>
-                            <p className="text-[11px] text-gray-500 font-medium truncate">Standard Seller</p>
-                        </div>
-                        <button onClick={handleLogout} className="text-gray-400 hover:text-red-500 transition-colors p-1">
-                            <LogOut size={16} />
-                        </button>
+                <div className="p-6">
+                    <div className="bg-slate-900 rounded-3xl p-6 text-white relative overflow-hidden group">
+                        <div className="absolute -top-12 -right-12 w-32 h-32 bg-emerald-500 rounded-full blur-3xl opacity-20 group-hover:opacity-40 transition-all duration-500"></div>
+                        <h4 className="text-[10px] font-black uppercase tracking-widest text-emerald-400 mb-2">Seller Pro</h4>
+                        <p className="text-[11px] font-medium text-slate-400 leading-relaxed mb-4">You have 3 items reaching surplus status soon.</p>
+                        <button className="w-full py-2.5 bg-white/10 hover:bg-white/20 rounded-xl text-xs font-black transition-all">Optimize Price</button>
                     </div>
+
+                    <button
+                        onClick={handleLogout}
+                        className="w-full flex items-center gap-4 px-4 py-4 mt-6 text-rose-500 font-bold text-sm hover:bg-rose-50 rounded-2xl transition-all"
+                    >
+                        <LogOut size={20} />
+                        Sign Out
+                    </button>
                 </div>
             </aside>
 
-            {/* Main Content Area */}
+            {/* Main content Area */}
             <div className="flex-1 flex flex-col">
-                {/* Top Mobile/Small Header */}
-                <header className="lg:hidden bg-white border-b border-gray-100 p-4 flex items-center justify-between">
-                    <div className="flex items-center gap-2">
-                        <img src={logo} alt="Logo" className="w-6 h-6" />
-                        <span className="font-bold text-lg">Chakula<span className="text-green-600">Konnect</span></span>
+                {/* Header */}
+                <header className="bg-white/80 backdrop-blur-xl border-b border-slate-200/60 h-20 flex items-center justify-between px-8 lg:px-12 sticky top-0 z-50">
+                    <div className="flex items-center gap-3">
+                        <div className="lg:hidden bg-emerald-500 p-1.5 rounded-lg mr-2">
+                            <img src={logo} alt="Logo" className="w-5 h-5 invert brightness-0" />
+                        </div>
+                        <h2 className="text-xl font-black text-slate-900 tracking-tight">Seller Overview</h2>
                     </div>
-                    <button className="p-2 bg-gray-50 rounded-lg text-gray-600">
-                        <LayoutDashboard size={20} />
-                    </button>
+
+                    <div className="flex items-center gap-4">
+                        <div className="hidden md:flex relative group mr-4">
+                            <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 group-focus-within:text-emerald-500 transition-colors" size={18} />
+                            <input
+                                type="text"
+                                placeholder="Search orders, items..."
+                                className="bg-slate-50 border border-slate-200 rounded-xl pl-10 pr-4 py-2.5 text-xs font-bold outline-none focus:bg-white focus:border-emerald-500 transition-all w-64"
+                            />
+                        </div>
+                        <button
+                            onClick={() => navigate('/add-product')}
+                            className="bg-emerald-500 text-white px-6 py-3 rounded-2xl font-black text-xs uppercase tracking-widest shadow-xl shadow-emerald-100 hover:bg-emerald-600 hover:-translate-y-0.5 transition-all flex items-center gap-2 active:scale-95"
+                        >
+                            <Plus size={18} strokeWidth={3} />
+                            Add Item
+                        </button>
+                    </div>
                 </header>
 
-                <main className="flex-1 p-6 lg:p-10 overflow-y-auto">
-                    {/* Header with Breadcrumb & Actions */}
-                    <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-10">
-                        <div>
-                            <div className="inline-flex items-center px-2 py-0.5 bg-gray-100 border border-gray-200 rounded text-[9px] font-bold text-gray-400 mb-3 uppercase tracking-widest">
-                                Seller dashboard
-                            </div>
-                            <h1 className="text-3xl font-extrabold text-gray-900 tracking-tight">
-                                Welcome back, {user.fullName?.split(' ')[0]}!
-                            </h1>
-                            <p className="text-gray-500 mt-1.5 font-medium">Here's what's happening with your farm today.</p>
-                        </div>
-                        <div className="flex items-center gap-3">
-                            <button className="px-6 py-3 rounded-2xl border border-gray-200 font-bold text-sm text-gray-700 hover:bg-white hover:shadow-md transition-all flex items-center gap-2 bg-white/50 backdrop-blur-sm">
-                                <Leaf size={18} className="text-green-500" />
-                                Mark Surplus
-                            </button>
-                            <button className="px-6 py-3 rounded-2xl bg-[#22C55E] text-white font-bold text-sm hover:bg-green-600 shadow-xl shadow-green-100 transition-all flex items-center gap-2 active:scale-95">
-                                <Plus size={20} />
-                                Add Product
-                            </button>
-                        </div>
+                <main className="flex-1 p-8 lg:p-12 max-w-7xl w-full mx-auto">
+                    {/* Welcome */}
+                    <div className="mb-12">
+                        <span className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-2 block">Enterprise Seller Terminal</span>
+                        <h1 className="text-4xl font-black text-slate-900 tracking-tight">Welcome back, {user?.fullName?.split(' ')[0]}!</h1>
+                        <p className="text-slate-500 font-medium mt-1">Your farm-to-table activity is looking strong today.</p>
                     </div>
 
-                    {/* Stats Cards Row */}
-                    <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-6 mb-10">
-                        {statCards.map((card, idx) => (
-                            <div key={idx} className="bg-white p-6 rounded-[28px] shadow-sm border border-gray-100 flex flex-col relative group hover:shadow-xl hover:border-green-50 transition-all duration-300">
-                                <div className="flex items-center justify-between mb-5">
-                                    <div className={`${card.bg} ${card.color} p - 3.5 rounded - 2xl shadow - sm group - hover: scale - 110 transition - transform`}>
-                                        <card.icon size={22} />
+                    {/* Stats Grid */}
+                    <div className="grid grid-cols-2 lg:grid-cols-4 gap-6 mb-12">
+                        {statCards.map((stat, idx) => (
+                            <div key={idx} className="bg-white p-7 rounded-[2.5rem] border border-slate-200/60 shadow-sm hover:shadow-2xl hover:border-emerald-50 hover:-translate-y-1 transition-all duration-300 group">
+                                <div className="flex items-center justify-between mb-8">
+                                    <div className={`${stat.bg} ${stat.color} w-12 h-12 rounded-2xl flex items-center justify-center group-hover:scale-110 transition-transform`}>
+                                        <stat.icon size={22} />
                                     </div>
-                                    <div className={`text - [10px] font - extrabold px - 2.5 py - 1 rounded - full uppercase tracking - wider ${card.change.includes('+') ? 'bg-green-50 text-green-600' :
-                                            card.change === 'High' ? 'bg-orange-50 text-orange-600' : 'bg-blue-50 text-blue-600'
-                                        } `}>
-                                        {card.change}
+                                    <div className="text-[10px] font-black px-2.5 py-1.5 bg-emerald-50 text-emerald-600 rounded-full shadow-sm">
+                                        {stat.change}
                                     </div>
                                 </div>
-                                <p className="text-xs font-bold text-gray-400 uppercase tracking-widest mb-1.5">{card.title}</p>
-                                <h3 className="text-2xl font-black text-gray-900 tracking-tight">{card.value}</h3>
+                                <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1">{stat.title}</p>
+                                <h3 className="text-3xl font-black text-slate-900 tracking-tighter">{stat.value}</h3>
                             </div>
                         ))}
                     </div>
 
-                    <div className="grid grid-cols-1 xl:grid-cols-3 gap-8">
-                        {/* Recent Orders Table Panel */}
-                        <div className="xl:col-span-2 bg-white rounded-[40px] p-8 shadow-sm border border-gray-100">
-                            <div className="flex items-center justify-between mb-8 px-2">
-                                <h2 className="text-xl font-black text-gray-800">Recent Orders</h2>
-                                <button className="text-[#22C55E] text-sm font-extrabold hover:underline flex items-center gap-1 group">
-                                    View All <ChevronRight size={16} className="group-hover:translate-x-1 transition-transform" />
+                    <div className="grid grid-cols-1 xl:grid-cols-12 gap-10">
+                        {/* Orders Section */}
+                        <div className="xl:col-span-8 bg-white rounded-[3rem] border border-slate-200/60 shadow-sm p-8 md:p-10">
+                            <div className="flex items-center justify-between mb-10">
+                                <h2 className="text-2xl font-black text-slate-900 tracking-tight">Recent Activity</h2>
+                                <button className="text-emerald-600 text-[10px] font-black uppercase tracking-widest flex items-center gap-2 hover:translate-x-1 transition-transform">
+                                    Full Report <ChevronRight size={14} strokeWidth={3} />
                                 </button>
                             </div>
+
                             <div className="overflow-x-auto">
-                                <table className="w-full text-left border-separate border-spacing-y-2">
+                                <table className="w-full text-left border-separate border-spacing-y-4">
                                     <thead>
-                                        <tr className="text-[11px] text-gray-400 uppercase tracking-widest font-black">
-                                            <th className="px-4 py-2 font-black">Order ID</th>
-                                            <th className="px-4 py-2 font-black">Product</th>
-                                            <th className="px-4 py-2 font-black">Quantity</th>
-                                            <th className="px-4 py-2 font-black text-center">Status</th>
-                                            <th className="px-4 py-2 font-black">Date</th>
+                                        <tr className="text-[10px] text-slate-400 uppercase tracking-widest font-black">
+                                            <th className="px-4 pb-2">Order Tracking</th>
+                                            <th className="px-4 pb-2">Produce Item</th>
+                                            <th className="px-4 pb-2">Volume</th>
+                                            <th className="px-4 pb-2 text-center">Lifecycle</th>
+                                            <th className="px-4 pb-2">Timestamp</th>
                                         </tr>
                                     </thead>
                                     <tbody>
                                         {recentOrders.map((order, idx) => (
-                                            <tr key={idx} className="group hover:bg-gray-50 transition-colors">
-                                                <td className="px-4 py-5 font-bold text-sm text-gray-900 border-t border-gray-50">{order.id}</td>
-                                                <td className="px-4 py-5 text-sm font-bold text-gray-700 border-t border-gray-50">{order.product}</td>
-                                                <td className="px-4 py-5 text-sm text-gray-500 font-bold border-t border-gray-50">{order.quantity}</td>
-                                                <td className="px-4 py-5 text-center border-t border-gray-50">
-                                                    <span className={`inline - block px - 3.5 py - 1.5 rounded - full text - [9px] font - black uppercase tracking - wider shadow - sm ${order.statusColor} `}>
+                                            <tr key={idx} className="group hover:bg-slate-50/80 transition-all cursor-pointer">
+                                                <td className="px-4 py-5 bg-white border-y border-l border-slate-100/60 rounded-l-2xl font-black text-sm text-slate-900 group-hover:border-emerald-100">{order.id}</td>
+                                                <td className="px-4 py-5 bg-white border-y border-slate-100/60 text-sm font-bold text-slate-600 group-hover:border-emerald-100">{order.product}</td>
+                                                <td className="px-4 py-5 bg-white border-y border-slate-100/60 text-sm text-slate-500 font-bold group-hover:border-emerald-100">{order.quantity}</td>
+                                                <td className="px-4 py-5 bg-white border-y border-slate-100/60 text-center group-hover:border-emerald-100">
+                                                    <span className={`inline-block px-3.5 py-1.5 rounded-full text-[9px] font-black uppercase tracking-widest shadow-sm border border-current/20 ${order.statusColor}`}>
                                                         {order.status}
                                                     </span>
                                                 </td>
-                                                <td className="px-4 py-5 text-sm text-gray-400 font-bold border-t border-gray-50">{order.date}</td>
+                                                <td className="px-4 py-5 bg-white border-y border-r border-slate-100/60 rounded-r-2xl text-xs text-slate-400 font-black group-hover:border-emerald-100">
+                                                    {order.date}
+                                                </td>
                                             </tr>
                                         ))}
                                     </tbody>
@@ -208,96 +255,77 @@ function SellerDashboard() {
                             </div>
                         </div>
 
-                        {/* Right Insights Column */}
-                        <div className="flex flex-col gap-8">
-                            {/* AI Market Insights Card */}
-                            <div className="bg-white rounded-[40px] p-8 shadow-sm border border-gray-100 flex flex-col relative overflow-hidden group">
-                                <div className="absolute top-0 right-0 w-32 h-32 bg-green-50 rounded-full blur-[60px] -mr-10 -mt-10 opacity-60"></div>
+                        {/* Side Panels */}
+                        <div className="xl:col-span-4 space-y-8">
+                            {/* AI Insights - Redesigned */}
+                            <div className="bg-slate-900 rounded-[3rem] p-10 text-white relative overflow-hidden shadow-2xl shadow-slate-200">
+                                <div className="absolute top-0 right-0 w-48 h-48 bg-emerald-500 rounded-full blur-[100px] opacity-20 -mr-20 -mt-20 scale-150"></div>
 
-                                <div className="flex items-center gap-3 mb-8 text-[#22C55E] relative">
-                                    <div className="bg-green-50 p-2 rounded-xl">
-                                        <Sparkles size={20} className="animate-pulse" />
+                                <div className="flex items-center gap-3 mb-10 relative z-10">
+                                    <div className="bg-white/10 p-2.5 rounded-2xl backdrop-blur-md">
+                                        <Sparkles size={20} className="text-emerald-400 animate-pulse" />
                                     </div>
-                                    <h2 className="text-lg font-black text-gray-800 tracking-tight">AI Market Insights</h2>
+                                    <h2 className="text-xl font-black tracking-tight">AI Market Radar</h2>
                                 </div>
 
-                                <div className="space-y-5 relative">
-                                    <div className="p-5 bg-orange-50/60 rounded-[28px] border border-orange-100 border-l-[6px] border-l-orange-400 shadow-sm hover:shadow-md transition-shadow">
-                                        <div className="flex items-center gap-2 text-orange-700 mb-2.5 uppercase text-[10px] font-black tracking-widest">
-                                            <Bell size={13} fill="currentColor" />
-                                            High Demand Alert
+                                <div className="space-y-6 relative z-10">
+                                    <div className="p-6 bg-white/5 border border-white/10 rounded-[2rem] hover:bg-white/10 transition-colors">
+                                        <div className="flex items-center gap-2 text-emerald-400 mb-3 uppercase text-[10px] font-black tracking-widest">
+                                            <TrendingUp size={14} strokeWidth={3} />
+                                            Opportunity Found
                                         </div>
-                                        <p className="text-xs text-gray-800 font-bold font-medium leading-[1.6]">
-                                            Demand for <span className="text-orange-800 font-black px-1.5 py-0.5 bg-orange-100 rounded">Fresh Tomatoes</span> is expected to rise by <span className="text-orange-600">40% next week</span>.
+                                        <p className="text-xs text-slate-300 font-medium leading-relaxed">
+                                            Demand for <span className="text-white font-black underline decoration-emerald-500 underline-offset-4">Organic Tomatoes</span> is spiking. Increase supply for <span className="text-emerald-400 font-black">+15% margins</span>.
                                         </p>
                                     </div>
 
-                                    <div className="p-5 bg-green-50/60 rounded-[28px] border border-green-100 border-l-[6px] border-l-green-400 shadow-sm hover:shadow-md transition-shadow">
-                                        <div className="flex items-center gap-2 text-green-700 mb-2.5 uppercase text-[10px] font-black tracking-widest">
-                                            <TrendingDown size={13} strokeWidth={3} />
-                                            Price Prediction
+                                    <div className="p-6 bg-white/5 border border-white/10 rounded-[2rem] hover:bg-white/10 transition-colors">
+                                        <div className="flex items-center gap-2 text-orange-400 mb-3 uppercase text-[10px] font-black tracking-widest">
+                                            <Clock size={14} strokeWidth={3} />
+                                            Pricing Alert
                                         </div>
-                                        <p className="text-xs text-gray-800 font-bold font-medium leading-[1.6]">
-                                            A slight price dip predicted for <span className="text-green-800 font-black px-1.5 py-0.5 bg-green-100 rounded">Cabbage</span>. List surplus stock now.
+                                        <p className="text-xs text-slate-300 font-medium leading-relaxed">
+                                            Competitor prices for Grains dropped. Consider a <span className="text-orange-400 font-black">Limited Surplus Sale</span> today.
                                         </p>
                                     </div>
 
-                                    <button className="w-full mt-2 py-4 rounded-2xl border border-gray-100 text-[#22C55E] text-xs font-black shadow-sm bg-white hover:bg-[#22C55E] hover:text-white transition-all duration-300 transform active:scale-[0.98]">
-                                        Explore Detailed Forecasts
+                                    <button className="w-full py-4 rounded-2xl bg-emerald-500 hover:bg-emerald-400 text-white text-xs font-black uppercase tracking-widest shadow-xl shadow-emerald-900/40 transition-all active:scale-95 flex items-center justify-center gap-2">
+                                        View Strategy Board
+                                        <ArrowUpRight size={16} />
                                     </button>
                                 </div>
                             </div>
 
-                            {/* Hotspots Map Card */}
-                            <div className="bg-white rounded-[40px] p-8 shadow-sm border border-gray-100 flex flex-col">
-                                <h2 className="text-lg font-black mb-6 text-gray-800 tracking-tight px-1">Nearby Demand Hotspots</h2>
-                                <div className="relative h-48 bg-emerald-50 rounded-[32px] overflow-hidden border border-emerald-100 group cursor-pointer shadow-inner">
-                                    {/* Visual Representation of Map */}
-                                    <div className="absolute inset-0 opacity-30 pointer-events-none transition-transform duration-1000 group-hover:scale-110">
-                                        {/* Abstract Map Circles */}
-                                        <div className="absolute top-8 left-12 w-24 h-24 bg-green-400 rounded-full blur-2xl animate-pulse"></div>
-                                        <div className="absolute bottom-6 right-8 w-32 h-32 bg-green-500 rounded-full blur-3xl opacity-60"></div>
-                                        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-48 h-48 bg-emerald-300 rounded-full blur-[80px] opacity-40"></div>
+                            {/* Demand Map Card - Consistent with Home */}
+                            <div className="bg-white rounded-[3rem] p-10 border border-slate-200/60 shadow-sm overflow-hidden group">
+                                <h2 className="text-lg font-black mb-8 text-slate-900 tracking-tight">Active Demand Hotspots</h2>
+                                <div className="relative h-56 bg-emerald-50 rounded-[2.5rem] border border-emerald-100 overflow-hidden cursor-pointer shadow-inner">
+                                    <div className="absolute inset-0 opacity-20 pointer-events-none group-hover:scale-110 transition-transform duration-1000" style={{ backgroundImage: 'radial-gradient(circle, #059669 1px, transparent 1px)', backgroundSize: '24px 24px' }}></div>
 
-                                        {/* Grid pattern overlay */}
-                                        <div className="absolute inset-0 opacity-10" style={{ backgroundImage: 'radial-gradient(circle, #059669 1px, transparent 1px)', backgroundSize: '24px 24px' }}></div>
-                                    </div>
+                                    {/* Abstract Heatmap Circles */}
+                                    <div className="absolute top-1/4 left-1/4 w-32 h-32 bg-emerald-400 rounded-full blur-3xl opacity-40 animate-pulse"></div>
+                                    <div className="absolute bottom-1/4 right-1/4 w-40 h-40 bg-emerald-600 rounded-full blur-[80px] opacity-30"></div>
 
-                                    {/* Market Tag UI */}
-                                    <div className="absolute bottom-6 left-6 right-6 flex items-center justify-between bg-white/95 backdrop-blur-md px-4 py-3.5 rounded-2xl border border-white shadow-xl transform group-hover:translate-y-[-4px] transition-all duration-300">
+                                    <div className="absolute bottom-6 left-6 right-6 flex items-center justify-between bg-white/95 backdrop-blur-md px-5 py-4 rounded-2xl border border-white shadow-2xl group-hover:-translate-y-2 transition-transform duration-300">
                                         <div className="flex items-center gap-3">
-                                            <div className="p-1.5 bg-green-100 rounded-lg">
-                                                <MapPin size={16} className="text-green-600" fill="currentColor" />
+                                            <div className="p-2 bg-emerald-100 rounded-xl text-emerald-600">
+                                                <MapPin size={18} fill="currentColor" />
                                             </div>
-                                            <span className="text-[12px] font-black text-gray-800">Lagos Central Market</span>
+                                            <div>
+                                                <p className="text-xs font-black text-slate-900">Ikeja Central</p>
+                                                <p className="text-[9px] font-bold text-slate-400 uppercase tracking-tighter">High Surplus Demand</p>
+                                            </div>
                                         </div>
-                                        <span className="text-[10px] font-black text-white bg-[#22C55E] px-2.5 py-1 rounded-full uppercase tracking-tighter shadow-md">
-                                            Very High
-                                        </span>
+                                        <div className="bg-emerald-500/10 text-emerald-600 p-2 rounded-lg">
+                                            <ArrowUpRight size={16} strokeWidth={3} />
+                                        </div>
                                     </div>
-
-                                    {/* Scanline Effect */}
-                                    <div className="absolute inset-0 bg-gradient-to-b from-transparent via-white/5 to-transparent h-[20%] w-full animate-scan pointer-events-none"></div>
                                 </div>
                             </div>
                         </div>
                     </div>
                 </main>
             </div>
-
-            <style dangerouslySetInnerHTML={{
-                __html: `
-@keyframes scan {
-                    from { transform: translateY(-100 %); }
-                    to { transform: translateY(500 %); }
-}
-                .animate - scan {
-    animation: scan 3s linear infinite;
-}
-                body {
-    font - family: 'Inter', system - ui, -apple - system, sans - serif;
-}
-`}} />
         </div>
     );
 }

@@ -31,6 +31,7 @@ function Registration() {
 
   // State for loading and global errors
   const [isLoading, setIsLoading] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
   const [apiError, setApiError] = useState('');
 
   // Hook to navigate to different pages
@@ -137,16 +138,22 @@ function Registration() {
       console.log(res)
 
       if (res.status === 201 || res.status === 200) {
-        setMessage('Registration successful! Redirecting to verification...');
-        // Redirect based on userType
-        if (res.data.data.user.userType === 'seller') {
-          navigate('/seller-dashboard');
-        } else {
-          navigate('/consumer-dashboard');
+        setMessage(`Registration successful! Welcome to the community, ${formData.fullName}!`);
+
+        // Store user and token if returned
+        if (res.data.data) {
+          localStorage.setItem('currentUser', JSON.stringify(res.data.data.user));
+          localStorage.setItem('token', res.data.data.token);
         }
-        // setTimeout(() => {
-        //   navigate('/verify', { state: { email: formData.email } });
-        // }, 1500);
+
+        // Redirect based on userType after a short delay
+        setTimeout(() => {
+          if (formData.userType === 'seller') {
+            navigate('/seller-dashboard');
+          } else {
+            navigate('/consumer-dashboard');
+          }
+        }, 1500);
       }
     } catch (err) {
       const errorMessage = err.response?.data?.message || err.message || 'Registration failed. Please try again.';
@@ -310,15 +317,18 @@ function Registration() {
                 <Lock size={18} />
               </span>
               <input
-                type="password"
+                type={showPassword ? "text" : "password"}
                 name="password"
                 value={formData.password}
                 onChange={handleChange}
                 placeholder="Create a strong password"
                 className={`w-full pl-10 pr-10 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500 ${errors.password ? 'border-red-500' : 'border-gray-300'}`}
               />
-              <span className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 cursor-pointer">
-                <Eye size={18} />
+              <span
+                className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 cursor-pointer hover:text-green-600 transition-colors"
+                onClick={() => setShowPassword(!showPassword)}
+              >
+                {showPassword ? <Eye size={18} className="text-green-600" /> : <Eye size={18} />}
               </span>
             </div>
             {errors.password && <p className="text-red-500 text-sm mt-1">{errors.password}</p>}
