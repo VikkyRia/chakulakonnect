@@ -13,6 +13,7 @@ import ProfileSettings from './pages/ProfileSettings';
 import MyListings from './pages/MyListings';
 import BudgetHelper from './pages/BudgetHelper';
 import SalesForecast from './pages/SalesForecast';
+import AIChatbot from './components/AIChatbot';
 import { getAllUsers } from './utils/auth';
 import './App.css';
 
@@ -71,6 +72,7 @@ function App() {
         {/* Catch-all for undefined routes */}
         <Route path="*" element={<Navigate to="/login" replace />} />
       </Routes>
+      <AIChatbot />
     </Router>
   );
 }

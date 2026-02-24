@@ -129,7 +129,7 @@ function BudgetHelper() {
                         <div className="w-16 h-16 bg-emerald-500 text-white rounded-[1.5rem] flex items-center justify-center mx-auto mb-6 shadow-xl shadow-emerald-100 animate-bounce-subtle">
                             <Sparkles size={32} />
                         </div>
-                        <h1 className="text-4xl font-black text-slate-900 tracking-tight mb-4">Intelligent Meal Planning</h1>
+                        <h1 className="text-4xl font-black text-slate-900 tracking-tight mb-4">Meal Planning</h1>
                         <p className="text-slate-500 font-medium leading-relaxed italic">
                             Enter your weekly budget, and our AI will curate the most nutritious, cost-effective basket of surplus farm produce just for you.
                         </p>

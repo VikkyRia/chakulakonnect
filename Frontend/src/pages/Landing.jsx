@@ -67,23 +67,12 @@ function Landing() {
               <Search size={18} className="text-gray-500" />
               <input type="text" placeholder="Search products..." className="bg-gray-100 outline-none text-sm text-gray-700 placeholder-gray-500 flex-1" />
             </div>
-            {user ? (
-              <button
-                onClick={() => navigate(user.userType === 'seller' ? '/seller-dashboard' : '/consumer-dashboard')}
-                className="px-4 py-2 bg-green-600 hover:bg-green-700 text-white text-sm font-medium rounded-lg transition"
-              >
-                Dashboard
-              </button>
-            ) : (
-              <>
-                <button onClick={() => navigate('/login')} className="text-gray-700 text-sm font-medium hover:text-gray-900">
-                  Login
-                </button>
-                <button onClick={() => navigate('/register')} className="px-4 py-2 bg-green-600 hover:bg-green-700 text-white text-sm font-medium rounded-lg transition">
-                  Get Started
-                </button>
-              </>
-            )}
+            <button onClick={() => navigate('/login')} className="text-gray-700 text-sm font-medium hover:text-gray-900">
+              Login
+            </button>
+            <button onClick={() => navigate('/register')} className="px-4 py-2 bg-green-600 hover:bg-green-700 text-white text-sm font-medium rounded-lg transition">
+              Get Started
+            </button>
           </div>
         </div>
       </nav>
