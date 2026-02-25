@@ -13,7 +13,7 @@ import smsIcon from "../assets/image/sms.svg";
 import homeIcon from "../assets/image/house.svg";
 import officeIcon from "../assets/image/bag.svg";
 
-import { FiLock, FiLogOut } from "react-icons/fi";
+import { Lock, LogOut } from "lucide-react";
 
 const BASE_URL = "https://chakulakonnect-backend.onrender.com/api";
 
@@ -155,7 +155,7 @@ function Profile() {
         </button>
 
         <button onClick={() => setActiveTab("password")}>
-          <FiLock className="sidebar-icon" />
+          <Lock className="sidebar-icon" />
           Change Password
         </button>
 
@@ -180,7 +180,7 @@ function Profile() {
         </button>
 
         <div className="logout" onClick={handleLogout}>
-          <FiLogOut className="sidebar-icon" />
+          <LogOut className="sidebar-icon" />
           Sign Out
         </div>
       </div>
@@ -188,7 +188,7 @@ function Profile() {
       {/* Content */}
       <div className="content">
         <div className="back-row">
-          <button className="back-btn" onClick={() =>navigate("/consumer-dashboard")}>
+          <button className="back-btn" onClick={() => navigate("/consumer-dashboard")}>
             Back to Dashboard </button>
         </div>
 
