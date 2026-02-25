@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import api from '../utils/api';
 import { isAuthenticated, getCurrentUser } from '../utils/auth';
 import {
@@ -21,6 +21,7 @@ import logo from '../assets/image/SVG.png';
 
 function ProfileSettings() {
     const navigate = useNavigate();
+    const location = useLocation();
     const [user, setUser] = useState(null);
     const [activeTab, setActiveTab] = useState('profile');
     const [loading, setLoading] = useState(true);
@@ -167,21 +168,25 @@ function ProfileSettings() {
         );
     }
 
+    const isNested = location.pathname.startsWith('/seller-dashboard');
+
     return (
-        <div className="min-h-screen bg-[#F8FAFC]">
-            {/* Header */}
-            <div className="bg-white border-b border-slate-100 sticky top-0 z-50">
-                <div className="max-w-4xl mx-auto px-6 h-16 flex items-center justify-between">
-                    <button onClick={() => navigate(-1)} className="flex items-center gap-2 text-slate-500 hover:text-slate-900 transition-colors group">
-                        <ArrowLeft size={18} className="group-hover:-translate-x-0.5 transition-transform" />
-                        <span className="text-sm font-bold">Back</span>
-                    </button>
-                    <div className="flex items-center gap-2">
-                        <img src={logo} alt="Logo" className="w-5 h-5" />
-                        <span className="text-sm font-black tracking-tight text-slate-900">Settings</span>
+        <div className={`flex-1 flex flex-col ${!isNested ? 'min-h-screen bg-[#F8FAFC]' : 'h-full overflow-y-auto'}`}>
+            {/* Header - Only show if not nested */}
+            {!isNested && (
+                <div className="bg-white border-b border-slate-100 sticky top-0 z-50 shrink-0">
+                    <div className="max-w-4xl mx-auto px-6 h-16 flex items-center justify-between">
+                        <button onClick={() => navigate(-1)} className="flex items-center gap-2 text-slate-500 hover:text-slate-900 transition-colors group">
+                            <ArrowLeft size={18} className="group-hover:-translate-x-0.5 transition-transform" />
+                            <span className="text-sm font-bold">Back</span>
+                        </button>
+                        <div className="flex items-center gap-2">
+                            <img src={logo} alt="Logo" className="w-5 h-5" />
+                            <span className="text-sm font-black tracking-tight text-slate-900">Settings</span>
+                        </div>
                     </div>
                 </div>
-            </div>
+            )}
 
             <div className="max-w-4xl mx-auto px-6 py-12">
                 <div className="flex flex-col md:flex-row gap-12">
