@@ -3,16 +3,17 @@ import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-d
 import Landing from './pages/Landing';
 import Registration from './pages/Registration';
 import Login from './pages/Login';
-import Dashboard from './pages/Dashboard';
 import VerifyIdentity from './pages/VerifyIdentity';
 import ConsumerDashboard from './pages/ConsumerDashboard';
-import SellerDashboard from './pages/SellerDashboard';
+import SellerLayout from './layouts/SellerLayout';
+import SellerOverview from './pages/SellerOverview';
 import Catalog from './pages/Catalog';
 import AddProduct from './pages/AddProduct';
 import ProfileSettings from './pages/ProfileSettings';
 import MyListings from './pages/MyListings';
 import BudgetHelper from './pages/BudgetHelper';
 import SalesForecast from './pages/SalesForecast';
+import EditProduct from './pages/EditProduct';
 import AIChatbot from './components/AIChatbot';
 import { getAllUsers } from './utils/auth';
 import './App.css';
@@ -49,28 +50,34 @@ function App() {
         {/* Login page */}
         <Route path="/login" element={<Login />} />
 
-        {/* Dashboard pages */}
-        <Route path="/dashboard" element={<Dashboard />} />
+        {/* Seller Dashboard nested routes */}
+        <Route path="/seller-dashboard" element={<SellerLayout />}>
+          <Route index element={<SellerOverview />} />
+          <Route path="overview" element={<SellerOverview />} />
+          <Route path="list" element={<MyListings />} />
+          <Route path="add" element={<AddProduct />} />
+          <Route path="edit/:foodId" element={<EditProduct />} />
+          <Route path="forecast" element={<SalesForecast />} />
+          <Route path="settings" element={<ProfileSettings />} />
+        </Route>
+
+        {/* Consumer Dashboard pages */}
         <Route path="/consumer-dashboard" element={<ConsumerDashboard />} />
-        <Route path="/seller-dashboard" element={<SellerDashboard />} />
 
         {/* Marketplace Catalog */}
         <Route path="/categories" element={<Catalog />} />
 
-        {/* Product Management */}
-        <Route path="/add-product" element={<AddProduct />} />
-        <Route path="/my-listings" element={<MyListings />} />
-
-        {/* AI Features */}
+        {/* AI Features (Top Level or Consumer) */}
         <Route path="/budget-helper" element={<BudgetHelper />} />
-        <Route path="/sales-forecast" element={<SalesForecast />} />
 
-        {/* User Settings */}
+        {/* Generic/Shared User Settings */}
         <Route path="/settings" element={<ProfileSettings />} />
-        <Route path="/seller-profile" element={<ProfileSettings />} />
 
-        {/* Catch-all for undefined routes */}
-        <Route path="*" element={<Navigate to="/login" replace />} />
+        {/* Redirects for legacy routes */}
+        <Route path="/seller-profile" element={<Navigate to="/seller-dashboard/settings" replace />} />
+        <Route path="/my-listings" element={<Navigate to="/seller-dashboard/list" replace />} />
+        <Route path="/add-product" element={<Navigate to="/seller-dashboard/add" replace />} />
+        <Route path="/sales-forecast" element={<Navigate to="/seller-dashboard/forecast" replace />} />
       </Routes>
       <AIChatbot />
     </Router>

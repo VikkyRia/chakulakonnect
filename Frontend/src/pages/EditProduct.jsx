@@ -1,21 +1,25 @@
-import { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useState, useEffect } from 'react';
+import { useNavigate, useParams } from 'react-router-dom';
 import api from '../utils/api';
 import {
     ChevronLeft,
-    Plus,
+    Save,
     Image as ImageIcon,
     X,
     ChevronDown,
     Loader2,
     CheckCircle2,
     AlertCircle,
-    Info
+    Info,
+    Trash2,
+    Plus
 } from 'lucide-react';
 
-function AddProduct() {
+function EditProduct() {
+    const { foodId } = useParams();
     const navigate = useNavigate();
     const [isLoading, setIsLoading] = useState(false);
+    const [isFetching, setIsFetching] = useState(true);
     const [success, setSuccess] = useState(false);
     const [error, setError] = useState('');
 
@@ -42,6 +46,50 @@ function AddProduct() {
 
     const categories = ['Vegetables', 'Fruits', 'Grains', 'Tubers', 'Protein', 'Dairy', 'Organic'];
     const units = ['kg', 'g', 'bunch', 'piece', 'liter', 'crate', 'bag'];
+
+    useEffect(() => {
+        const fetchProduct = async () => {
+            try {
+                // We'll try to find it in the "my-listings" first or fetch directly
+                // Based on user request, let's assume we can fetch by ID directly
+                const res = await api.get(`/api/foods/seller/my-listings`);
+                if (res.data.success) {
+                    const product = res.data.data.listings.find(item => (item.id || item._id) === foodId);
+                    if (product) {
+                        setFormData({
+                            name: product.name || '',
+                            description: product.description || '',
+                            category: product.category || 'Vegetables',
+                            price: product.price || '',
+                            quantity: product.quantity || '',
+                            unit: product.unit || 'kg',
+                            images: product.images?.length ? product.images : [''],
+                            location: {
+                                address: product.location?.address || '',
+                                city: product.location?.city || '',
+                                state: product.location?.state || ''
+                            },
+                            status: product.status || 'available',
+                            nutritionInfo: {
+                                calories: product.nutritionInfo?.calories || '',
+                                protein: product.nutritionInfo?.protein || '',
+                                carbs: product.nutritionInfo?.carbs || ''
+                            }
+                        });
+                    } else {
+                        setError('Product not found in your listings.');
+                    }
+                }
+            } catch (err) {
+                console.error('Failed to fetch product:', err);
+                setError('Could not load product details.');
+            } finally {
+                setIsFetching(false);
+            }
+        };
+
+        fetchProduct();
+    }, [foodId]);
 
     const handleChange = (e) => {
         const { name, value } = e.target;
@@ -96,24 +144,26 @@ function AddProduct() {
             }
         };
 
-        if (payload.images.length === 0) {
-            setError('At least one image URL is required.');
-            setIsLoading(false);
-            return;
-        }
-
         try {
-            const res = await api.post('/api/foods', payload);
+            const res = await api.put(`/api/foods/${foodId}`, payload);
             if (res.data.success) {
                 setSuccess(true);
                 setTimeout(() => navigate('/seller-dashboard/list'), 2000);
             }
         } catch (err) {
-            setError(err.response?.data?.message || 'Failed to add product. Please check your inputs.');
+            setError(err.response?.data?.message || 'Failed to update product. Please check your inputs.');
         } finally {
             setIsLoading(false);
         }
     };
+
+    if (isFetching) {
+        return (
+            <div className="flex-1 flex items-center justify-center">
+                <Loader2 className="w-10 h-10 text-emerald-500 animate-spin" />
+            </div>
+        );
+    }
 
     if (success) {
         return (
@@ -123,8 +173,8 @@ function AddProduct() {
                         <div className="absolute inset-0 bg-emerald-100 rounded-full animate-ping opacity-25"></div>
                         <CheckCircle2 className="w-12 h-12 text-emerald-500 relative z-10" />
                     </div>
-                    <h2 className="text-3xl font-black text-slate-900 mb-3 tracking-tight">Product Published!</h2>
-                    <p className="text-slate-500 font-medium leading-relaxed">Your listing is now live. We're taking you back to your inventory...</p>
+                    <h2 className="text-3xl font-black text-slate-900 mb-3 tracking-tight">Changes Saved!</h2>
+                    <p className="text-slate-500 font-medium leading-relaxed">Your listing has been successfully updated.</p>
                 </div>
             </div>
         );
@@ -142,8 +192,8 @@ function AddProduct() {
                         <ChevronLeft size={22} />
                     </button>
                     <div className="flex flex-col">
-                        <span className="text-[10px] font-black text-slate-400 uppercase tracking-widest leading-none mb-1">Marketplace</span>
-                        <h1 className="text-lg font-black text-slate-900 leading-none">Add New Product</h1>
+                        <span className="text-[10px] font-black text-slate-400 uppercase tracking-widest leading-none mb-1">Editing Listing</span>
+                        <h1 className="text-lg font-black text-slate-900 leading-none">{formData.name || 'Product Details'}</h1>
                     </div>
                 </div>
 
@@ -153,22 +203,21 @@ function AddProduct() {
                         onClick={() => navigate('/seller-dashboard/list')}
                         className="px-6 py-2.5 rounded-xl text-slate-500 font-bold hover:bg-slate-100 transition-all"
                     >
-                        Discard
+                        Cancel
                     </button>
                     <button
                         onClick={handleSubmit}
                         disabled={isLoading}
                         className="px-8 py-2.5 rounded-xl bg-emerald-500 text-white font-black hover:bg-emerald-600 shadow-xl shadow-emerald-200/50 transition-all flex items-center gap-2 group active:scale-95 disabled:opacity-50"
                     >
-                        {isLoading ? <Loader2 className="animate-spin" size={20} /> : <Plus size={20} />}
-                        Publish Item
+                        {isLoading ? <Loader2 className="animate-spin" size={20} /> : <Save size={20} />}
+                        Save Changes
                     </button>
                 </div>
             </header>
 
             <main className="flex-1 p-8 lg:p-12 max-w-7xl w-full mx-auto">
                 <form onSubmit={handleSubmit} className="grid grid-cols-1 lg:grid-cols-12 gap-10">
-                    {/* Main Content Column */}
                     <div className="lg:col-span-8 space-y-8">
                         {error && (
                             <div className="p-5 bg-rose-50 border border-rose-100 rounded-2xl text-rose-600 font-bold flex items-center gap-4 animate-in slide-in-from-top-4 duration-300">
@@ -190,8 +239,7 @@ function AddProduct() {
                                         name="name"
                                         value={formData.name}
                                         onChange={handleChange}
-                                        placeholder="e.g. Premium Organic Red Tomatoes"
-                                        className="w-full bg-slate-50/50 border border-slate-200 rounded-2xl px-6 py-4 focus:bg-white focus:border-emerald-500 focus:ring-4 focus:ring-emerald-50 transition-all outline-none font-bold text-slate-900 text-lg placeholder:text-slate-300"
+                                        className="w-full bg-slate-50/50 border border-slate-200 rounded-2xl px-6 py-4 focus:bg-white focus:border-emerald-500 transition-all outline-none font-bold text-slate-900 text-lg"
                                     />
                                 </div>
                                 <div>
@@ -201,9 +249,8 @@ function AddProduct() {
                                         name="description"
                                         value={formData.description}
                                         onChange={handleChange}
-                                        placeholder="Describe the freshness, farm location, or any unique selling points..."
                                         rows="6"
-                                        className="w-full bg-slate-50/50 border border-slate-200 rounded-2xl px-6 py-4 focus:bg-white focus:border-emerald-500 focus:ring-4 focus:ring-emerald-50 transition-all outline-none font-medium text-slate-600 resize-none leading-relaxed placeholder:text-slate-300"
+                                        className="w-full bg-slate-50/50 border border-slate-200 rounded-2xl px-6 py-4 focus:bg-white focus:border-emerald-500 transition-all outline-none font-medium text-slate-600 resize-none leading-relaxed"
                                     ></textarea>
                                 </div>
                             </div>
@@ -219,10 +266,10 @@ function AddProduct() {
                                         <div key={index} className="space-y-3 relative group">
                                             <div className="h-48 rounded-2xl bg-slate-50 border-2 border-dashed border-slate-200 flex items-center justify-center overflow-hidden relative transition-all group-hover:border-emerald-200 group-hover:bg-emerald-50/30">
                                                 {url ? (
-                                                    <img src={url} alt="Preview" className="w-full h-full object-cover transition-transform group-hover:scale-105" />
+                                                    <img src={url} alt="Preview" className="w-full h-full object-cover" />
                                                 ) : (
                                                     <div className="flex flex-col items-center gap-2 text-slate-300">
-                                                        <ImageIcon size={32} strokeWidth={1.5} />
+                                                        <ImageIcon size={32} />
                                                         <span className="text-[10px] font-black uppercase tracking-widest">Preview</span>
                                                     </div>
                                                 )}
@@ -230,19 +277,18 @@ function AddProduct() {
                                                     <button
                                                         type="button"
                                                         onClick={() => removeImageField(index)}
-                                                        className="absolute top-3 right-3 p-2 bg-white/90 backdrop-blur rounded-xl shadow-lg shadow-slate-200/50 text-slate-400 hover:text-rose-500 opacity-0 group-hover:opacity-100 transition-all"
+                                                        className="absolute top-3 right-3 p-2 bg-white/90 backdrop-blur rounded-xl text-slate-400 hover:text-rose-500 opacity-0 group-hover:opacity-100 transition-all"
                                                     >
                                                         <X size={16} />
                                                     </button>
                                                 )}
                                             </div>
                                             <input
-                                                required={index === 0}
                                                 type="url"
                                                 value={url}
                                                 onChange={(e) => handleImageChange(index, e.target.value)}
                                                 placeholder="Image URL..."
-                                                className="w-full bg-slate-50/50 border border-slate-200 rounded-xl px-4 py-2.5 focus:bg-white focus:border-emerald-500 transition-all outline-none font-medium text-xs text-slate-600 placeholder:text-slate-300"
+                                                className="w-full bg-slate-50/50 border border-slate-200 rounded-xl px-4 py-2.5 focus:bg-white transition-all outline-none font-medium text-xs text-slate-600"
                                             />
                                         </div>
                                     ))}
@@ -272,7 +318,6 @@ function AddProduct() {
                                             name="location.address"
                                             value={formData.location.address}
                                             onChange={handleChange}
-                                            placeholder="Street No, Area"
                                             className="w-full bg-slate-100/50 border border-slate-200 rounded-xl px-4 py-3 focus:bg-white focus:border-emerald-500 transition-all outline-none font-bold text-sm"
                                         />
                                     </div>
@@ -285,7 +330,7 @@ function AddProduct() {
                                                 name="location.city"
                                                 value={formData.location.city}
                                                 onChange={handleChange}
-                                                className="w-full bg-slate-100/50 border border-slate-200 rounded-xl px-4 py-3 focus:bg-white focus:border-emerald-500 transition-all outline-none font-bold text-sm"
+                                                className="w-full bg-slate-100/50 border border-slate-200 rounded-xl px-4 py-3 focus:bg-white transition-all outline-none font-bold text-sm"
                                             />
                                         </div>
                                         <div>
@@ -296,7 +341,7 @@ function AddProduct() {
                                                 name="location.state"
                                                 value={formData.location.state}
                                                 onChange={handleChange}
-                                                className="w-full bg-slate-100/50 border border-slate-200 rounded-xl px-4 py-3 focus:bg-white focus:border-emerald-500 transition-all outline-none font-bold text-sm"
+                                                className="w-full bg-slate-100/50 border border-slate-200 rounded-xl px-4 py-3 focus:bg-white transition-all outline-none font-bold text-sm"
                                             />
                                         </div>
                                     </div>
@@ -315,7 +360,7 @@ function AddProduct() {
                                             name="nutrition.calories"
                                             value={formData.nutritionInfo.calories}
                                             onChange={handleChange}
-                                            className="w-full bg-slate-100/50 border border-slate-200 rounded-xl px-4 py-3 focus:bg-white focus:border-emerald-500 transition-all outline-none font-bold text-sm"
+                                            className="w-full bg-slate-100/50 border border-slate-200 rounded-xl px-4 py-3 focus:bg-white transition-all outline-none font-bold text-sm"
                                         />
                                     </div>
                                     <div>
@@ -325,17 +370,17 @@ function AddProduct() {
                                             name="nutrition.protein"
                                             value={formData.nutritionInfo.protein}
                                             onChange={handleChange}
-                                            className="w-full bg-slate-100/50 border border-slate-200 rounded-xl px-4 py-3 focus:bg-white focus:border-emerald-500 transition-all outline-none font-bold text-sm"
+                                            className="w-full bg-slate-100/50 border border-slate-200 rounded-xl px-4 py-3 focus:bg-white transition-all outline-none font-bold text-sm"
                                         />
                                     </div>
                                     <div className="col-span-2">
-                                        <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-2 block">Carbohydrates</label>
+                                        <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-2 block">Carbs</label>
                                         <input
                                             type="number"
                                             name="nutrition.carbs"
                                             value={formData.nutritionInfo.carbs}
                                             onChange={handleChange}
-                                            className="w-full bg-slate-100/50 border border-slate-200 rounded-xl px-4 py-3 focus:bg-white focus:border-emerald-500 transition-all outline-none font-bold text-sm"
+                                            className="w-full bg-slate-100/50 border border-slate-200 rounded-xl px-4 py-3 focus:bg-white transition-all outline-none font-bold text-sm"
                                         />
                                     </div>
                                 </div>
@@ -343,7 +388,6 @@ function AddProduct() {
                         </div>
                     </div>
 
-                    {/* Sidebar Column */}
                     <div className="lg:col-span-4 space-y-8">
                         <div className="bg-white rounded-3xl border border-slate-200/60 shadow-sm overflow-hidden">
                             <div className="px-8 py-6 border-b border-slate-50 bg-slate-50/30">
@@ -357,7 +401,7 @@ function AddProduct() {
                                             name="category"
                                             value={formData.category}
                                             onChange={handleChange}
-                                            className="w-full bg-slate-50 border border-slate-200 rounded-2xl px-6 py-4 focus:bg-white focus:border-emerald-500 transition-all outline-none font-black text-slate-700 appearance-none cursor-pointer"
+                                            className="w-full bg-slate-50 border border-slate-200 rounded-2xl px-6 py-4 focus:bg-white transition-all outline-none font-black text-slate-700 appearance-none cursor-pointer"
                                         >
                                             {categories.map(cat => <option key={cat} value={cat}>{cat}</option>)}
                                         </select>
@@ -429,8 +473,8 @@ function AddProduct() {
 
                         <div className="bg-slate-900 rounded-3xl p-8 text-white relative overflow-hidden">
                             <Info className="text-emerald-400 mb-4" size={24} />
-                            <h4 className="font-extrabold text-sm mb-2">Need Help?</h4>
-                            <p className="text-[11px] text-slate-400 italic">Freshness is our priority. Ensure your images clearly show the quality of your produce.</p>
+                            <h4 className="font-extrabold text-sm mb-2">Editor Mode</h4>
+                            <p className="text-[11px] text-slate-400 italic">You are currently updating an existing product. These changes will reflect immediately in the marketplace.</p>
                         </div>
                     </div>
                 </form>
@@ -439,4 +483,4 @@ function AddProduct() {
     );
 }
 
-export default AddProduct;
+export default EditProduct;
