@@ -1,0 +1,329 @@
+/* =========================
+   Layout
+========================= */
+
+.profile-wrapper {
+  display: flex;
+  min-height: 100vh;
+  background: #f5f7fa;
+  font-family: "Inter", sans-serif;
+}
+
+/* =========================
+   Sidebar
+========================= */
+
+.sidebar {
+  width: 260px;
+  background: #ffffff;
+  padding: 30px 20px;
+  border-right: 1px solid #e5e7eb;
+
+  display: flex;
+  flex-direction: column;
+}
+
+.sidebar h3 {
+  margin-bottom: 25px;
+  font-size: 18px;
+  font-weight: 600;
+}
+
+.sidebar button {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  width: 100%;
+  padding: 12px 10px;
+  border: none;
+  background: none;
+  font-size: 14px;
+  cursor: pointer;
+  border-radius: 6px;
+  transition: 0.2s ease;
+  text-align: left;
+}
+
+.sidebar button:hover {
+  background: #f3f4f6;
+}
+
+.sidebar-icon {
+  width: 18px;
+  height: 18px;
+}
+
+/* ===== Push logout to bottom ===== */
+
+.logout {
+  margin-top: auto;   /* THIS pushes it down */
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 12px 10px;
+  cursor: pointer;
+  border-radius: 6px;
+  color: #dc2626;
+  transition: 0.2s ease;
+}
+
+.logout:hover {
+  background: #fef2f2;
+}
+
+/* =========================
+   Content
+========================= */
+
+.content {
+  flex: 1;
+  padding: 40px;
+}
+
+/* =========================
+   Card
+========================= */
+
+.card {
+  background: #ffffff;
+  padding: 30px;
+  border-radius: 10px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.04);
+  margin-bottom: 30px;
+}
+
+.card h2 {
+  margin-bottom: 20px;
+  font-size: 20px;
+  font-weight: 600;
+}
+
+/* =========================
+   Forms
+========================= */
+
+.form-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 20px;
+}
+
+.form-grid input {
+  padding: 12px;
+  border: 1px solid #e5e7eb;
+  border-radius: 6px;
+  font-size: 14px;
+}
+
+.form-grid input:disabled {
+  background: #f3f4f6;
+}
+
+/* =========================
+   Buttons
+========================= */
+
+.button-row {
+  margin-top: 20px;
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+}
+
+.primary {
+  background: #16a34a;
+  color: white;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 14px;
+  transition: 0.2s ease;
+}
+
+.primary:hover {
+  background: #15803d;
+}
+
+.primary.small {
+  padding: 8px 14px;
+  font-size: 13px;
+}
+
+/* =========================
+   Orders
+========================= */
+
+.order-row {
+  display: grid;
+  grid-template-columns: 120px 1fr 1fr 120px;
+  padding: 12px 0;
+  border-bottom: 1px solid #f0f0f0;
+  font-size: 14px;
+}
+
+/* =========================
+   Addresses
+========================= */
+
+.address-display {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+  padding: 15px;
+  border: 1px solid #e5e7eb;
+  border-radius: 8px;
+  margin-bottom: 15px;
+  cursor: pointer;
+  transition: 0.2s ease;
+}
+
+.address-display:hover {
+  background: #f9fafb;
+}
+
+.address-display img {
+  width: 24px;
+  height: 24px;
+}
+
+/* =========================
+   Payments
+========================= */
+
+.payment-item {
+  padding: 12px 0;
+  border-bottom: 1px solid #f0f0f0;
+  font-size: 14px;
+}
+
+/* =========================
+   Notifications (FIXED ALIGNMENT)
+========================= */
+
+.notification-option {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 14px 0;
+  border-bottom: 1px solid #f0f0f0;
+}
+
+.notification-left {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.notification-left img {
+  width: 20px;
+  height: 20px;
+}
+
+.notification-left strong {
+  font-size: 14px;
+  display: block;
+}
+
+.notification-left p {
+  font-size: 12px;
+  color: #6b7280;
+  margin: 2px 0 0 0;
+}
+
+/* =========================
+   Messages
+========================= */
+
+.message {
+  margin-bottom: 20px;
+  color: #16a34a;
+  font-size: 14px;
+}
+
+.back-row {
+  margin-bottom: 20px;
+}
+
+.back-btn {
+  background: none;
+  border: none;
+  color: #16a34a;
+  font-size: 14px;
+  cursor: pointer;
+  font-weight: 500;
+}
+
+.back-btn:hover {
+  text-decoration: underline;
+}
+
+.personal-card {
+  position: relative;
+}
+
+.personal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 25px;
+}
+
+.profile-image img {
+  width: 70px;
+  height: 70px;
+  border-radius: 50%;
+  object-fit: cover;
+}
+
+.form-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 20px;
+}
+
+.form-group {
+  display: flex;
+  flex-direction: column;
+}
+
+.form-group label {
+  font-size: 13px;
+  margin-bottom: 6px;
+  font-weight: 500;
+}
+
+.form-group input {
+  padding: 10px 12px;
+  border: 1px solid #dcdcdc;
+  border-radius: 6px;
+  font-size: 14px;
+}
+
+.form-group input:disabled {
+  background-color: #f5f5f5;
+  cursor: not-allowed;
+}
+
+.full-width {
+  grid-column: span 2;
+}
+
+.button-row {
+  display: flex;
+  justify-content: flex-end;
+  margin-top: 25px;
+}
+
+.primary {
+  background-color: #2e7d32;
+  color: white;
+  border: none;
+  padding: 10px 18px;
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+.primary:hover {
+  opacity: 0.9;
+}
