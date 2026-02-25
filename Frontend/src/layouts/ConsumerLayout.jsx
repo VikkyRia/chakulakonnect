@@ -2,19 +2,21 @@ import { useState, useEffect } from 'react';
 import { useNavigate, Outlet, useLocation } from 'react-router-dom';
 import {
     LayoutDashboard,
-    Box,
-    ShoppingCart,
+    ShoppingBag,
     Sparkles,
-    Bell,
+    History,
+    Heart,
+    MapPin,
     Settings,
     LogOut,
     Menu,
-    X
+    X,
+    Filter
 } from 'lucide-react';
 import logo from '../assets/image/SVG.png';
 import { isAuthenticated, logoutUser } from '../utils/auth';
 
-function SellerLayout() {
+function ConsumerLayout() {
     const navigate = useNavigate();
     const location = useLocation();
     const [loading, setLoading] = useState(true);
@@ -47,12 +49,13 @@ function SellerLayout() {
     }
 
     const navItems = [
-        { icon: LayoutDashboard, label: 'Overview', path: '/seller-dashboard' },
-        { icon: Box, label: 'My Listings', path: '/seller-dashboard/list' },
-        { icon: ShoppingCart, label: 'Order Hub', path: '/seller-dashboard/orders' },
-        { icon: Sparkles, label: 'AI Forecast', path: '/seller-dashboard/forecast' },
-        { icon: Bell, label: 'Market Alerts', path: '/seller-dashboard/alerts' },
-        { icon: Settings, label: 'Settings', path: '/seller-dashboard/settings' }
+        { icon: LayoutDashboard, label: 'Explore', path: '/consumer-dashboard' },
+        { icon: ShoppingBag, label: 'Marketplace', path: '/categories' },
+        { icon: Sparkles, label: 'Budget Helper', path: '/consumer-dashboard/budget' },
+        { icon: History, label: 'Order History', path: '/consumer-dashboard/orders' },
+        { icon: Heart, label: 'Favorites', path: '/consumer-dashboard/favorites' },
+        { icon: MapPin, label: 'Track Orders', path: '/consumer-dashboard/track' },
+        { icon: Settings, label: 'Settings', path: '/consumer-dashboard/settings' }
     ];
 
     const SidebarContent = () => (
@@ -70,7 +73,7 @@ function SellerLayout() {
 
             <nav className="flex-1 px-6 space-y-2 mt-4">
                 {navItems.map((item, idx) => {
-                    const isActive = location.pathname === item.path || (item.path === '/seller-dashboard' && location.pathname === '/seller-dashboard/overview');
+                    const isActive = location.pathname === item.path;
                     return (
                         <button
                             key={idx}
@@ -85,11 +88,11 @@ function SellerLayout() {
             </nav>
 
             <div className="p-6 mt-auto">
-                <div className="bg-slate-900 rounded-3xl p-6 text-white relative overflow-hidden group mb-6">
-                    <div className="absolute -top-12 -right-12 w-32 h-32 bg-emerald-500 rounded-full blur-3xl opacity-20 group-hover:opacity-40 transition-all duration-500"></div>
-                    <h4 className="text-[10px] font-black uppercase tracking-widest text-emerald-400 mb-2">Seller Pro</h4>
-                    <p className="text-[11px] font-medium text-slate-400 leading-relaxed mb-4">You have items reaching surplus status soon.</p>
-                    <button className="w-full py-2.5 bg-white/10 hover:bg-white/20 rounded-xl text-xs font-black transition-all">Optimize Price</button>
+                <div className="bg-emerald-600 rounded-3xl p-6 text-white relative overflow-hidden group mb-6 shadow-xl shadow-emerald-100">
+                    <div className="absolute -top-12 -right-12 w-32 h-32 bg-white/20 rounded-full blur-3xl opacity-20 group-hover:opacity-40 transition-all duration-500"></div>
+                    <h4 className="text-[10px] font-black uppercase tracking-widest text-emerald-100 mb-2">Chakula Rewards</h4>
+                    <p className="text-[11px] font-medium text-emerald-50 leading-relaxed mb-4">You have 450 points! Save 15% on your next surplus order.</p>
+                    <button className="w-full py-2.5 bg-white/20 hover:bg-white/30 rounded-xl text-xs font-black transition-all">Redeem Now</button>
                 </div>
 
                 <button
@@ -153,4 +156,4 @@ function SellerLayout() {
     );
 }
 
-export default SellerLayout;
+export default ConsumerLayout;

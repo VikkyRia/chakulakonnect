@@ -28,6 +28,7 @@ function SellerOverview() {
         surplusListings: 0,
         totalQuantity: 0
     });
+    const [insights, setInsights] = useState(null);
     const [loading, setLoading] = useState(true);
 
     useEffect(() => {
@@ -47,6 +48,12 @@ function SellerOverview() {
                 const response = await api.get('/api/foods/seller/my-listings');
                 if (response.data.success) {
                     setStats(response.data.data.stats);
+                }
+
+                // Fetch AI Insights
+                const insightsRes = await api.get('/api/ai/seller/insights');
+                if (insightsRes.data.success) {
+                    setInsights(insightsRes.data.data);
                 }
             } catch (error) {
                 console.error("Error fetching seller data:", error);
@@ -71,10 +78,38 @@ function SellerOverview() {
     }
 
     const statCards = [
-        { title: 'Total Listings', value: stats.totalListings, change: '+12%', icon: Package, color: 'text-blue-600', bg: 'bg-blue-50' },
-        { title: 'In Stock', value: stats.availableListings, change: 'Optimal', icon: Zap, color: 'text-emerald-600', bg: 'bg-emerald-50' },
-        { title: 'Surplus Stock', value: stats.surplusListings, change: 'Urgent', icon: Leaf, color: 'text-orange-600', bg: 'bg-orange-50' },
-        { title: 'Total Sales', value: '₦142K', change: '+24%', icon: DollarSign, color: 'text-indigo-600', bg: 'bg-indigo-50' },
+        {
+            title: 'Total Listings',
+            value: insights?.total_listings || stats.totalListings,
+            change: '+12%',
+            icon: Package,
+            color: 'text-blue-600',
+            bg: 'bg-blue-50'
+        },
+        {
+            title: 'In Stock',
+            value: insights?.available_listings || stats.availableListings,
+            change: 'Optimal',
+            icon: Zap,
+            color: 'text-emerald-600',
+            bg: 'bg-emerald-50'
+        },
+        {
+            title: 'Surplus Stock',
+            value: insights?.surplus_items || stats.surplusListings,
+            change: 'Urgent',
+            icon: Leaf,
+            color: 'text-orange-600',
+            bg: 'bg-orange-50'
+        },
+        {
+            title: 'Inventory Value',
+            value: `₦${Number(insights?.total_inventory_value || 0).toLocaleString()}`,
+            change: '+24%',
+            icon: DollarSign,
+            color: 'text-indigo-600',
+            bg: 'bg-indigo-50'
+        },
     ];
 
     const recentOrders = [
@@ -141,7 +176,10 @@ function SellerOverview() {
                     <div className="xl:col-span-8 bg-white rounded-[3rem] border border-slate-200/60 shadow-sm p-8 md:p-10">
                         <div className="flex items-center justify-between mb-10">
                             <h2 className="text-2xl font-black text-slate-900 tracking-tight">Recent Activity</h2>
-                            <button className="text-emerald-600 text-[10px] font-black uppercase tracking-widest flex items-center gap-2 hover:translate-x-1 transition-transform">
+                            <button
+                                onClick={() => navigate('/seller-dashboard/list')}
+                                className="text-emerald-600 text-[10px] font-black uppercase tracking-widest flex items-center gap-2 hover:translate-x-1 transition-transform"
+                            >
                                 Full Report <ChevronRight size={14} strokeWidth={3} />
                             </button>
                         </div>
