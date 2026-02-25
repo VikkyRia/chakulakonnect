@@ -154,37 +154,38 @@ function SellerOverview() {
                 </div>
 
                 {/* Stats Grid */}
-                <div className="grid grid-cols-2 lg:grid-cols-4 gap-6 mb-12">
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-12">
                     {statCards.map((stat, idx) => (
-                        <div key={idx} className="bg-white p-7 rounded-[2.5rem] border border-slate-200/60 shadow-sm hover:shadow-2xl hover:border-emerald-50 hover:-translate-y-1 transition-all duration-300 group">
+                        <div key={idx} className="bg-white p-6 sm:p-7 rounded-[2.5rem] border border-slate-200/60 shadow-sm hover:shadow-2xl hover:border-emerald-50 hover:-translate-y-1 transition-all duration-300 group">
                             <div className="flex items-center justify-between mb-8">
-                                <div className={`${stat.bg} ${stat.color} w-12 h-12 rounded-2xl flex items-center justify-center group-hover:scale-110 transition-transform`}>
-                                    <stat.icon size={22} />
+                                <div className={`${stat.bg} ${stat.color} w-10 h-10 sm:w-12 sm:h-12 rounded-xl sm:rounded-2xl flex items-center justify-center group-hover:scale-110 transition-transform`}>
+                                    <stat.icon size={20} className="sm:size-[22px]" />
                                 </div>
                                 <div className="text-[10px] font-black px-2.5 py-1.5 bg-emerald-50 text-emerald-600 rounded-full shadow-sm">
                                     {stat.change}
                                 </div>
                             </div>
                             <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1">{stat.title}</p>
-                            <h3 className="text-3xl font-black text-slate-900 tracking-tighter">{stat.value}</h3>
+                            <h3 className="text-2xl sm:text-3xl font-black text-slate-900 tracking-tighter">{stat.value}</h3>
                         </div>
                     ))}
                 </div>
 
                 <div className="grid grid-cols-1 xl:grid-cols-12 gap-10">
                     {/* Orders Section */}
-                    <div className="xl:col-span-8 bg-white rounded-[3rem] border border-slate-200/60 shadow-sm p-8 md:p-10">
-                        <div className="flex items-center justify-between mb-10">
-                            <h2 className="text-2xl font-black text-slate-900 tracking-tight">Recent Activity</h2>
+                    <div className="xl:col-span-8 bg-white rounded-[2.5rem] sm:rounded-[3rem] border border-slate-200/60 shadow-sm p-6 sm:p-8 md:p-10">
+                        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-10">
+                            <h2 className="text-xl sm:text-2xl font-black text-slate-900 tracking-tight">Recent Activity</h2>
                             <button
                                 onClick={() => navigate('/seller-dashboard/list')}
-                                className="text-emerald-600 text-[10px] font-black uppercase tracking-widest flex items-center gap-2 hover:translate-x-1 transition-transform"
+                                className="text-emerald-600 text-[10px] font-black uppercase tracking-widest flex items-center gap-2 hover:translate-x-1 transition-transform self-start sm:self-auto"
                             >
                                 Full Report <ChevronRight size={14} strokeWidth={3} />
                             </button>
                         </div>
 
-                        <div className="overflow-x-auto">
+                        {/* Desktop Table View */}
+                        <div className="hidden md:block overflow-x-auto">
                             <table className="w-full text-left border-separate border-spacing-y-4">
                                 <thead>
                                     <tr className="text-[10px] text-slate-400 uppercase tracking-widest font-black">
@@ -213,6 +214,27 @@ function SellerOverview() {
                                     ))}
                                 </tbody>
                             </table>
+                        </div>
+
+                        {/* Mobile Card View */}
+                        <div className="md:hidden space-y-4">
+                            {recentOrders.map((order, idx) => (
+                                <div key={idx} className="p-5 bg-white border border-slate-100 rounded-2xl shadow-sm space-y-4">
+                                    <div className="flex items-center justify-between">
+                                        <span className="text-xs font-black text-slate-900">{order.id}</span>
+                                        <span className={`px-2.5 py-1 rounded-full text-[8px] font-black uppercase tracking-widest border border-current/20 ${order.statusColor}`}>
+                                            {order.status}
+                                        </span>
+                                    </div>
+                                    <div className="flex justify-between items-end">
+                                        <div>
+                                            <h4 className="font-bold text-slate-700 text-sm">{order.product}</h4>
+                                            <p className="text-[10px] text-slate-400 font-bold uppercase">{order.quantity}</p>
+                                        </div>
+                                        <span className="text-[10px] text-slate-400 font-black">{order.date}</span>
+                                    </div>
+                                </div>
+                            ))}
                         </div>
                     </div>
 
