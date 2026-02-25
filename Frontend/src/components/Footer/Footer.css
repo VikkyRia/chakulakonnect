@@ -1,0 +1,75 @@
+footer {
+  background: #f9fafb;
+  width: 100%;
+  display: flex;
+  align-items: start;
+
+  
+
+
+}
+
+
+/* TOP SECTION (3 columns) */
+.footer-top {
+  display: flex;
+  justify-content: space-between;
+  align-items:flex-start;
+  margin-top: 40px;
+  gap: 200px;
+}
+
+/* BRAND SECTION */
+.footer-brand {
+  max-width: 320px;
+}
+
+.brand-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 15px;
+}
+
+.footer-logo {
+  width: 42px;
+  height: 42px;
+}
+
+.brand-name {
+  font-size: 20px;
+  font-weight: 600;
+  color: #16a34a; /* green */
+}
+
+.brand-description {
+  color: #6b7280;
+  line-height: 1.6;
+  font-size: 15px;
+}
+
+/* MARKETPLACE + SUPPORT */
+.footer-column h4 {
+  font-size: 16px;
+  margin-bottom: 15px;
+  color: #111827;
+}
+
+.footer-column p {
+  margin-bottom: 10px;
+  color: #6b7280;
+  cursor: pointer;
+  transition: 0.2s ease;
+}
+
+.footer-column p:hover {
+  color: #16a34a;
+}
+
+/* BOTTOM */
+.footer-bottom {
+  border-top: 1px solid #e5e7eb;
+  padding-top: 20px;
+  font-size: 14px;
+  color: #9ca3af;
+}

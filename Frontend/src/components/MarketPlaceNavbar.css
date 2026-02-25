@@ -1,0 +1,121 @@
+.marketplace-navbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 16px 50px;
+  background: #ffffff;
+  border-bottom: 1px solid #eeeeee;
+}
+
+/* LEFT */
+.brand {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 18px;
+  font-weight: 600;
+  text-decoration: none;
+  color:#30BF72 ;
+}
+
+.brand img {
+  width: 28px;
+}
+
+/* CENTER */
+.nav-center {
+  display: flex;
+  gap: 40px;
+}
+
+.nav-center a {
+  text-decoration: none;
+  color: #444;
+  font-weight: 500;
+}
+
+.active-link {
+  color:#30BF72 ;
+  font-weight: 600;
+  pointer-events: none;
+}
+
+/* RIGHT */
+.nav-right {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+}
+
+/* ICON BUTTONS */
+.icon-btn {
+  background: none;
+  border: none;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+}
+
+.icon-btn img {
+  width: 20px;
+  height: 20px;
+}
+
+/* SEARCH */
+.search-form input {
+  padding: 8px 14px;
+  width: 200px;
+  border-radius: 999px;
+  border: 1px solid #ddd;
+  outline: none;
+}
+
+.search-form input:focus {
+  border-color: #30BF72;
+}
+
+/* ACCOUNT */
+.account-btn {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  background: #dcfce7;
+  padding: 8px 14px;
+  border-radius: 30px;
+  text-decoration: none;
+  color:#30BF72 ;
+  font-weight: 500;
+}
+
+.account-btn img {
+  width: 18px;
+}
+.icon-wrapper {
+  position: relative;
+}
+
+.badge {
+  position: absolute;
+  top: -4px;
+  right: -4px;
+
+  width: 16px;
+  height: 16px;
+
+  background: #22c55e;
+  color: white;
+
+  border-radius: 70px;
+
+  font-size: 10px;
+  font-weight: 600;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  line-height: 1;
+}
