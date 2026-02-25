@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import api from '../utils/api';
 import { getCurrentUser, logoutUser, isAuthenticated } from '../utils/auth';
 
 function Dashboard() {
@@ -14,17 +15,31 @@ function Dashboard() {
 
   // useEffect hook to check authentication and get user data
   useEffect(() => {
-    // Check if user is authenticated
     if (!isAuthenticated()) {
-      // Redirect to login if not authenticated
       navigate('/login');
       return;
     }
 
-    // Get current user data
-    const currentUser = getCurrentUser();
-    setUser(currentUser);
-    setLoading(false);
+    const fetchProfile = async () => {
+      try {
+        const res = await api.get('/api/users/me');
+        if (res.data.success) {
+          const userData = res.data.data.user;
+          setUser(userData);
+          localStorage.setItem('currentUser', JSON.stringify(userData));
+        }
+      } catch (err) {
+        console.error('Failed to fetch profile:', err);
+        const localUser = getCurrentUser();
+        if (localUser) {
+          setUser(localUser);
+        }
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchProfile();
   }, [navigate]);
 
   // Handle logout

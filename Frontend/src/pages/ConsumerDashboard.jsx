@@ -19,7 +19,7 @@ function ConsumerDashboard() {
       <DealsSection/>
       <FeaturedSellers/>
     </div>
-  );
-}
+  );}
+
 
 export default ConsumerDashboard;
