@@ -1,7 +1,7 @@
 import { useNavigate } from "react-router-dom";
 import { Star, MapPin, ArrowRight } from "lucide-react";
 
-import seller1 from "../../assets/image/seller1.png";
+import seller1 from "../../assets/image/Seller1.png";
 import seller2 from "../../assets/image/seller2.png";
 import seller3 from "../../assets/image/seller3.png";
 
