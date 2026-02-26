@@ -2,6 +2,8 @@ import {
     Bell,
     TrendingUp,
     TrendingDown,
+    AlertTriangle,
+    CheckCircle2,
     Calendar,
     ArrowRight,
     MapPin

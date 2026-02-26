@@ -11,6 +11,15 @@ function VerifyIdentity() {
 
 
   useEffect(() => {
+    // Get email from location state or fallback
+    if (location.state?.email) {
+      setEmail(location.state.email);
+    } else {
+      setEmail('user@example.com');
+    }
+  }, [location.state]);
+
+  useEffect(() => {
     // Timer countdown
     if (timer > 0) {
       const interval = setInterval(() => setTimer(t => t - 1), 1000);

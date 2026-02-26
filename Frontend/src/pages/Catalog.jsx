@@ -9,6 +9,7 @@ import {
     ChevronRight,
     ShoppingBag,
     Plus,
+    Filter,
     ArrowRight,
     SearchX
 } from 'lucide-react';
@@ -65,7 +66,7 @@ function Catalog() {
                 <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-20 flex items-center justify-between gap-4">
                     <div className="flex items-center gap-2.5 cursor-pointer shrink-0" onClick={() => navigate('/')}>
                         <div className="bg-emerald-500 p-2 rounded-xl shadow-lg shadow-emerald-100">
-                            <img src={logo} alt="Logo" className="w-6 h-6 object-contain" />
+                            <img src={logo} alt="Logo" className="w-6 h-6 invert brightness-0" />
                         </div>
                         <span className="hidden sm:block text-xl font-black tracking-tight text-slate-900 italic">
                             Chakula<span className="text-emerald-500">Konnect</span>

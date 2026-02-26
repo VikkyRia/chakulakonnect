@@ -107,6 +107,7 @@ function SellerLayout() {
         );
     }
 
+
     return (
         <div className="min-h-screen bg-[#F8FAFC] flex flex-col lg:flex-row relative">
             {/* Desktop Sidebar */}

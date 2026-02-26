@@ -63,7 +63,7 @@ function ConsumerLayout() {
             <div className="p-8">
                 <div className="flex items-center gap-2.5 cursor-pointer" onClick={() => navigate('/')}>
                     <div className="bg-emerald-500 p-2 rounded-xl shadow-lg shadow-emerald-100">
-                        <img src={logo} alt="Logo" className="w-5 h-5 object-contain" />
+                        <img src={logo} alt="Logo" className="w-5 h-5 invert brightness-0" />
                     </div>
                     <span className="text-xl font-black tracking-tight text-slate-900">
                         Chakula<span className="text-emerald-500">Konnect</span>
