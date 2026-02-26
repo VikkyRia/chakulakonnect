@@ -8,8 +8,6 @@ import {
     ChevronLeft,
     ChevronRight,
     ShoppingBag,
-    Loader2,
-    X,
     Plus,
     Filter,
     ArrowRight,
@@ -27,7 +25,7 @@ function Catalog() {
         search: '',
         page: 1
     });
-    const [user, setUser] = useState(null);
+    const [user] = useState(() => getCurrentUser());
 
     const categories = ['All', 'Vegetables', 'Fruits', 'Grains', 'Tubers', 'Protein', 'Dairy'];
 
@@ -53,7 +51,6 @@ function Catalog() {
     };
 
     useEffect(() => {
-        setUser(getCurrentUser());
         fetchFoods();
     }, [filters.category, filters.page]);
 

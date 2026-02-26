@@ -21,7 +21,6 @@ function MyListings() {
     const [deletingId, setDeletingId] = useState(null);
     const [successMessage, setSuccessMessage] = useState('');
     const [insights, setInsights] = useState(null);
-    const [insightsLoading, setInsightsLoading] = useState(true);
 
     useEffect(() => {
         fetchListings();
@@ -29,7 +28,7 @@ function MyListings() {
     }, []);
 
     const fetchInsights = async () => {
-        setInsightsLoading(true);
+
         try {
             const res = await api.get('/api/ai/seller/insights');
             if (res.data.success) {
@@ -38,7 +37,7 @@ function MyListings() {
         } catch (err) {
             console.error('Failed to fetch insights:', err);
         } finally {
-            setInsightsLoading(false);
+
         }
     };
 

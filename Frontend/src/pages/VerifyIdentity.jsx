@@ -4,10 +4,11 @@ import { useNavigate, useLocation } from 'react-router-dom';
 function VerifyIdentity() {
   const [code, setCode] = useState(['', '', '', '', '', '']);
   const [timer, setTimer] = useState(60);
-  const [email, setEmail] = useState('');
   const inputRefs = useRef([]);
   const navigate = useNavigate();
   const location = useLocation();
+  const [email, setEmail] = useState(location.state?.email || 'user@example.com');
+
 
   useEffect(() => {
     // Get email from location state or fallback

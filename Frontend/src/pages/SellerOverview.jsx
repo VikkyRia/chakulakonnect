@@ -16,7 +16,7 @@ import {
     ArrowUpRight,
     Zap
 } from 'lucide-react';
-import logo from '../assets/image/SVG.png';
+
 
 function SellerOverview() {
     const navigate = useNavigate();

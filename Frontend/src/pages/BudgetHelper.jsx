@@ -8,7 +8,6 @@ import {
     Wallet,
     ShoppingBasket,
     TrendingUp,
-    Leaf,
     ArrowRight,
     Loader2,
     CheckCircle2,
