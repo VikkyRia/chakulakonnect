@@ -12,7 +12,9 @@ import youngImg from '../assets/image/Young.png';
 import farmerImg from '../assets/image/farmer.png';
 
 function Landing() {
+  const navigate = useNavigate();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const [user, setUser] = useState(null);
 
   useEffect(() => {
     setUser(getCurrentUser());

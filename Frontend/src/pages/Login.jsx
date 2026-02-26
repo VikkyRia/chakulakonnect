@@ -78,35 +78,49 @@ function Login() {
     setIsLoading(true);
 
     try {
+      // 1. Try API login first
       const res = await api.post('/api/auth/login', {
         email: formData.email,
         password: formData.password
       });
 
       if (res.data.success) {
-        // Store user and token in localStorage
         const { user, token } = res.data.data;
         localStorage.setItem('currentUser', JSON.stringify(user));
         localStorage.setItem('token', token);
-
-        // Show welcome message
         setSuccessMessage(`Welcome back, ${user.fullName}!`);
 
-        // Redirect based on userType after a short delay to see the message
-        setTimeout(() => {
-          if (user.userType === 'seller') {
-            navigate('/seller-dashboard');
-          } else {
-            navigate('/consumer-dashboard');
-          }
-        }, 1500);
+        handleRedirect(user);
       }
     } catch (err) {
-      const errorMsg = err.response?.data?.message || err.message || 'Login failed. Please try again.';
-      setErrorMessage(errorMsg);
+      // 2. Fallback to local authentication for demo users
+      const localUsers = JSON.parse(localStorage.getItem('users') || '[]');
+      const localUser = localUsers.find(u => u.email === formData.email && u.password === formData.password);
+
+      if (localUser) {
+        localStorage.setItem('currentUser', JSON.stringify(localUser));
+        setSuccessMessage(`Welcome back, ${localUser.fullName}! (Internal)`);
+        handleRedirect(localUser);
+      } else {
+        const errorMsg = err.response?.data?.message || err.message || 'Login failed. Please try again.';
+        setErrorMessage(errorMsg);
+      }
     } finally {
       setIsLoading(false);
     }
+  };
+
+  const handleRedirect = (user) => {
+    // Redirect based on userType or role (caseless)
+    const type = (user.userType || user.role || '').toLowerCase();
+
+    setTimeout(() => {
+      if (type === 'seller') {
+        navigate('/seller-dashboard');
+      } else {
+        navigate('/consumer-dashboard');
+      }
+    }, 1500);
   };
 
   return (

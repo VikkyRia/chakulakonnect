@@ -39,13 +39,21 @@ function App() {
 
     // If no users exist, add a demo user for testing
     if (users.length === 0) {
-      const demoUser = {
-        fullName: 'Demo User',
-        email: 'demo@example.com',
-        password: 'demo123',
-        role: 'Consumer'
-      };
-      localStorage.setItem('users', JSON.stringify([demoUser]));
+      const demoUsers = [
+        {
+          fullName: 'Demo Consumer',
+          email: 'demo@example.com',
+          password: 'demo123',
+          role: 'Consumer'
+        },
+        {
+          fullName: 'Demo Seller',
+          email: 'seller@example.com',
+          password: 'seller123',
+          role: 'Seller'
+        }
+      ];
+      localStorage.setItem('users', JSON.stringify(demoUsers));
     }
   }, []);
 
@@ -87,7 +95,8 @@ function App() {
         </Route>
 
         <Route element={<Marketplace />}>
-          <Route path="/marketplace" element={<Marketplace />} />
+          <Route index element={<Navigate to="/marketplace" replace />} />
+          <Route path="/marketplace" element={<Catalog />} />
           <Route path="/foods/:id" element={<FoodDetails />} />
           <Route path="/profile" element={<Profile />} />
           <Route path="/cart" element={<Cart />} />
