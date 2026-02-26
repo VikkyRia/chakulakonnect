@@ -7,7 +7,7 @@ import bellIcon from "../assets/image/bell.svg";
 import payIcon from "../assets/image/pay.svg";
 import addressIcon from "../assets/image/address.svg";
 import orderIcon from "../assets/image/order.svg";
-import lockIcon from "../assets/image/lock.svg";
+
 import emailIcon from "../assets/image/email.svg";
 import smsIcon from "../assets/image/sms.svg";
 import homeIcon from "../assets/image/house.svg";
@@ -34,19 +34,19 @@ function Profile() {
     newPassword: "",
   });
 
-  const [homeAddress, setHomeAddress] = useState({
+  const [homeAddress] = useState({
     street: "",
     state: "",
   });
 
-  const [officeAddress, setOfficeAddress] = useState({
+  const [officeAddress] = useState({
     plot: "",
     street: "",
     state: "",
     region: "",
   });
 
-  const [editingAddress, setEditingAddress] = useState(null);
+
   const [paymentMethods, setPaymentMethods] = useState([]);
   const navigate = useNavigate()
   const hardcodedOrders = [

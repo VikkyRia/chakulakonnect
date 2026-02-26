@@ -5,9 +5,7 @@ import {
     CheckCircle2,
     Truck,
     Search,
-    Filter,
-    ChevronRight,
-    MoreHorizontal
+    ChevronRight
 } from 'lucide-react';
 
 function OrderHub() {

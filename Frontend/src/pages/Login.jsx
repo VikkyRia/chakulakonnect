@@ -1,6 +1,5 @@
 import { useState } from 'react';
 import loginImg from '../assets/image/login.png';
-import testImg from '../assets/image/tomatoes.png';
 import logo from '../assets/image/SVG.png';
 import { useNavigate } from 'react-router-dom';
 import api from '../utils/api';

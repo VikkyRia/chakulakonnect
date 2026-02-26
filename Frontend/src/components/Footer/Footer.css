@@ -1,75 +1,115 @@
-footer {
-  background: #f9fafb;
+.footer {
+  background: #0f172a;
+  /* Slate 900 */
+  color: #f8fafc;
+  padding: 60px 0 30px 0;
   width: 100%;
-  display: flex;
-  align-items: start;
-
-  
-
-
 }
 
+.footer-container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 24px;
+}
 
-/* TOP SECTION (3 columns) */
+/* TOP SECTION */
 .footer-top {
   display: flex;
   justify-content: space-between;
-  align-items:flex-start;
-  margin-top: 40px;
-  gap: 200px;
+  flex-wrap: wrap;
+  gap: 40px;
+  margin-top: 0;
+  margin-bottom: 40px;
 }
 
 /* BRAND SECTION */
 .footer-brand {
-  max-width: 320px;
+  flex: 1;
+  min-width: 280px;
 }
 
 .brand-row {
   display: flex;
   align-items: center;
   gap: 12px;
-  margin-bottom: 15px;
+  margin-bottom: 20px;
+}
+
+.footer-logo-wrapper {
+  background: #10b981;
+  /* Emerald 500 */
+  padding: 8px;
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
 }
 
 .footer-logo {
-  width: 42px;
-  height: 42px;
+  width: 24px;
+  height: 24px;
+  object-fit: contain;
 }
 
 .brand-name {
-  font-size: 20px;
-  font-weight: 600;
-  color: #16a34a; /* green */
+  font-size: 24px;
+  font-weight: 800;
+  color: #ffffff;
+  letter-spacing: -0.025em;
+  font-style: italic;
+}
+
+.brand-name .text-emerald-500 {
+  color: #10b981;
 }
 
 .brand-description {
-  color: #6b7280;
+  color: #94a3b8;
   line-height: 1.6;
   font-size: 15px;
+  max-width: 300px;
+  font-style: italic;
 }
 
-/* MARKETPLACE + SUPPORT */
+/* COLUMNS */
+.footer-column {
+  flex: 0 1 200px;
+}
+
 .footer-column h4 {
-  font-size: 16px;
-  margin-bottom: 15px;
-  color: #111827;
+  font-size: 14px;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  margin-bottom: 24px;
+  color: #10b981;
+  /* Emerald 500 */
 }
 
 .footer-column p {
-  margin-bottom: 10px;
-  color: #6b7280;
+  margin-bottom: 12px;
+  color: #94a3b8;
+  font-size: 14px;
+  font-weight: 600;
   cursor: pointer;
-  transition: 0.2s ease;
+  transition: all 0.3s ease;
+  font-style: italic;
 }
 
 .footer-column p:hover {
-  color: #16a34a;
+  color: #ffffff;
+  transform: translateX(5px);
 }
 
 /* BOTTOM */
 .footer-bottom {
-  border-top: 1px solid #e5e7eb;
-  padding-top: 20px;
-  font-size: 14px;
-  color: #9ca3af;
+  border-top: 1px solid rgba(255, 255, 255, 0.05);
+  padding-top: 30px;
+  font-size: 13px;
+  color: #64748b;
+  text-align: center;
+  font-weight: 600;
+  font-style: italic;
 }

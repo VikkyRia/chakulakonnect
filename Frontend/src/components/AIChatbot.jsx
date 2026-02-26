@@ -12,7 +12,6 @@ import {
     User
 } from 'lucide-react';
 import api from '../utils/api';
-import logo from '../assets/image/SVG.png';
 
 function AIChatbot() {
     const navigate = useNavigate();
@@ -134,8 +133,8 @@ function AIChatbot() {
                                         {msg.type === 'user' ? <User size={16} /> : <Bot size={16} />}
                                     </div>
                                     <div className={`p-4 rounded-2xl text-sm font-medium leading-relaxed shadow-sm ${msg.type === 'user'
-                                            ? 'bg-slate-900 text-white rounded-tr-none'
-                                            : 'bg-white border border-slate-100 text-slate-700 rounded-tl-none'
+                                        ? 'bg-slate-900 text-white rounded-tr-none'
+                                        : 'bg-white border border-slate-100 text-slate-700 rounded-tl-none'
                                         }`}>
                                         <div className="whitespace-pre-wrap">{msg.text}</div>
                                         {msg.special === 'basket' && (

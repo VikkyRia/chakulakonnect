@@ -4,16 +4,11 @@ import api from '../utils/api';
 import { isAuthenticated, getCurrentUser } from '../utils/auth';
 import {
     User,
-    Mail,
-    Phone,
-    MapPin,
     ArrowLeft,
     CheckCircle2,
     AlertCircle,
-    Lock,
     Eye,
     EyeOff,
-    Settings,
     Shield,
     Bell
 } from 'lucide-react';

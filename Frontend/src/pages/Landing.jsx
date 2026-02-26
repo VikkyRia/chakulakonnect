@@ -1,7 +1,7 @@
 import { useNavigate } from 'react-router-dom';
 import { useState, useEffect } from 'react';
-import { isAuthenticated, getCurrentUser } from '../utils/auth';
-import { ChevronRight, Leaf, Users, Sprout, ArrowRight, Search, CheckCircle } from 'lucide-react';
+import { getCurrentUser } from '../utils/auth';
+import { ChevronRight, ArrowRight, Search, CheckCircle } from 'lucide-react';
 import logo from '../assets/image/SVG.png';
 import priceImg from '../assets/image/price.png';
 import pricingImg from '../assets/image/pricing.png';
@@ -11,19 +11,49 @@ import imgImg from '../assets/image/Img.png';
 import youngImg from '../assets/image/Young.png';
 import farmerImg from '../assets/image/farmer.png';
 
+// Category Images
+import fruitsImg from '../assets/image/fruits.png';
+import vegetablesImg from '../assets/image/Fresh green vegetables.png';
+import poultryImg from '../assets/image/Organic eggs.png';
+import bakeryImg from '../assets/image/Fresh baked bread.png';
+import meatImg from '../assets/image/Raw meat.png';
+import grainsImg from '../assets/image/Honey jar.png';
+
+// Product Images
+import applesImg from '../assets/image/apples.png';
+import potatoesImg from '../assets/image/potatoes.png';
+import lettuceImg from '../assets/image/lettuce.png';
+import tomatoesImg from '../assets/image/tomatoes.png';
+
 function Landing() {
   const navigate = useNavigate();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
-  const [user, setUser] = useState(null);
+  const [user] = useState(() => getCurrentUser());
 
   useEffect(() => {
-    setUser(getCurrentUser());
+    // Session state initialization
   }, []);
 
   const features = [
     { icon: <div className="mx-auto mb-4 w-12 h-12 rounded-full flex items-center justify-center bg-emerald-50 border border-emerald-100 shadow-sm"><img src={priceImg} alt="Predictive Sourcing" className="w-6 h-6" /></div>, title: 'Predictive Sourcing', desc: 'Our AI predicts demand to ensure sellers only provide what is needed, reducing waste by 40%.' },
     { icon: <div className="mx-auto mb-4 w-12 h-12 rounded-full flex items-center justify-center bg-emerald-50 border border-emerald-100 shadow-sm"><img src={pricingImg} alt="Transparent Pricing" className="w-6 h-6" /></div>, title: 'Transparent Pricing', desc: 'Smart contracts ensure sellers get paid instantly and fairly, without hidden commissions.' },
     { icon: <div className="mx-auto mb-4 w-12 h-12 rounded-full flex items-center justify-center bg-emerald-50 border border-emerald-100 shadow-sm"><img src={havestImg} alt="Traceable Harvest" className="w-6 h-6" /></div>, title: 'Traceable Harvest', desc: 'Every item is tracked from seed to shelf. Know exactly which seller provided your dinner.' }
+  ];
+
+  const categories = [
+    { src: fruitsImg, label: 'Fruits' },
+    { src: vegetablesImg, label: 'Vegetables' },
+    { src: poultryImg, label: 'Poultry' },
+    { src: bakeryImg, label: 'Bakery' },
+    { src: meatImg, label: 'Meat' },
+    { src: grainsImg, label: 'Grains' }
+  ];
+
+  const trendingHarvests = [
+    { img: applesImg, tag: 'HOT DEAL', name: 'Crisp Honeycrisp', price: '₦2,990', unit: '/kg', seller: 'Nyeri Organic Hub' },
+    { img: potatoesImg, tag: 'BEST VALUE', name: 'Yukon Gold Potatoes', price: '₦1,200', unit: '/kg', seller: 'Rift Valley Sellers' },
+    { img: lettuceImg, tag: 'NEW', name: 'Butterhead Lettuce', price: '₦1,500', unit: '/unit', seller: 'Green Garden' },
+    { img: tomatoesImg, tag: 'POPULAR', name: 'Ruby Red Tomatoes', price: '₦3,500', unit: '/kg', seller: 'Sunrise Collective' }
   ];
 
   return (
@@ -53,10 +83,21 @@ function Landing() {
                 <Search size={18} className="text-slate-400" />
                 <input type="text" placeholder="Search fresh food..." className="bg-transparent outline-none text-sm text-slate-700 placeholder-slate-400 w-full font-medium" />
               </div>
-              <button onClick={() => navigate('/login')} className="text-slate-700 text-sm font-black hover:text-green-600 transition-colors px-4">Login</button>
-              <button onClick={() => navigate('/register')} className="px-6 py-3 bg-slate-900 hover:bg-black text-white text-sm font-black rounded-xl transition-all shadow-xl hover:shadow-slate-200 active:scale-95">
-                Join Now
-              </button>
+              {user ? (
+                <button
+                  onClick={() => navigate(user.userType === 'seller' ? '/seller-dashboard' : '/consumer-dashboard')}
+                  className="w-10 h-10 rounded-xl bg-green-600 flex items-center justify-center text-white shadow-lg font-black text-sm"
+                >
+                  {user.fullName?.[0]}
+                </button>
+              ) : (
+                <>
+                  <button onClick={() => navigate('/login')} className="text-slate-700 text-sm font-black hover:text-green-600 transition-colors px-4">Login</button>
+                  <button onClick={() => navigate('/register')} className="px-6 py-3 bg-slate-900 hover:bg-black text-white text-sm font-black rounded-xl transition-all shadow-xl hover:shadow-slate-200 active:scale-95">
+                    Join Now
+                  </button>
+                </>
+              )}
             </div>
 
             {/* Mobile Menu Button */}
@@ -181,14 +222,7 @@ function Landing() {
           </div>
 
           <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-6">
-            {[
-              { src: '/src/assets/image/fruits.png', label: 'Fruits' },
-              { src: '/src/assets/image/Fresh green vegetables.png', label: 'Vegetables' },
-              { src: '/src/assets/image/Organic eggs.png', label: 'Poultry' },
-              { src: '/src/assets/image/Fresh baked bread.png', label: 'Bakery' },
-              { src: '/src/assets/image/Raw meat.png', label: 'Meat' },
-              { src: '/src/assets/image/Honey jar.png', label: 'Grains' }
-            ].map((item, idx) => (
+            {categories.map((item, idx) => (
               <div
                 key={idx}
                 className="group relative aspect-square rounded-[32px] overflow-hidden cursor-pointer shadow-xl hover:shadow-2xl transition-all duration-500"
@@ -221,12 +255,7 @@ function Landing() {
           </div>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
-            {[
-              { img: '/src/assets/image/apples.png', tag: 'HOT DEAL', name: 'Crisp Honeycrisp', price: '$2.99', unit: '/kg', seller: 'Nyeri Organic Hub' },
-              { img: '/src/assets/image/potatoes.png', tag: 'BEST VALUE', name: 'Yukon Gold Potatoes', price: '$1.20', unit: '/kg', seller: 'Rift Valley Sellers' },
-              { img: '/src/assets/image/lettuce.png', tag: 'NEW', name: 'Butterhead Lettuce', price: '$1.50', unit: '/unit', seller: 'Green Garden' },
-              { img: '/src/assets/image/tomatoes.png', tag: 'POPULAR', name: 'Ruby Red Tomatoes', price: '$3.50', unit: '/kg', seller: 'Sunrise Collective' }
-            ].map((item, idx) => (
+            {trendingHarvests.map((item, idx) => (
               <div key={idx} className="group bg-white rounded-[40px] border border-slate-100 hover:border-green-100 p-4 transition-all duration-500 hover:shadow-2xl hover:shadow-green-100 flex flex-col">
                 <div className="relative aspect-[16/11] rounded-[32px] overflow-hidden mb-6">
                   <img src={item.img} alt={item.name} className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700" />
