@@ -1,11 +1,11 @@
 import { Outlet } from "react-router-dom";
-import MarketplaceNavbar from "../components/MarketplaceNavbar"; 
+import MarketPlaceNavbar from "../components/MarketPlaceNavbar"; 
 import Footer from "../components/Footer/Footer";
 
 function Marketplace() {
   return (
     <>
-      <MarketplaceNavbar/>
+      <MarketPlaceNavbar/>
       <Outlet/>
     </>
   );
