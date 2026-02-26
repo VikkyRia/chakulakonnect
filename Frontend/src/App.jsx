@@ -95,7 +95,6 @@ function App() {
         </Route>
 
         <Route element={<Marketplace />}>
-          <Route index element={<Navigate to="/marketplace" replace />} />
           <Route path="/marketplace" element={<Catalog />} />
           <Route path="/foods/:id" element={<FoodDetails />} />
           <Route path="/profile" element={<Profile />} />
