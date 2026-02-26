@@ -5,7 +5,7 @@ import Footer from "../components/Footer/Footer";
 function Marketplace() {
   return (
     <>
-      <MarketPlaceNavbar />
+      <MarketplaceNavbar />
       <Outlet />
     </>
   );
