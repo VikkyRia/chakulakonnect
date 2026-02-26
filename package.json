@@ -4,7 +4,9 @@
   "description": "A Digital Platform for Affordable, Nutritious Food Access and Farmer Market Linkages",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "build": "vite build",
+    "start": "vite"
   },
   "repository": {
     "type": "git",
