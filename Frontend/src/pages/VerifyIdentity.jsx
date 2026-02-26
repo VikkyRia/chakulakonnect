@@ -11,13 +11,20 @@ function VerifyIdentity() {
 
   useEffect(() => {
     // Get email from location state or fallback
-    setEmail(location.state?.email || 'user@example.com');
+    if (location.state?.email) {
+      setEmail(location.state.email);
+    } else {
+      setEmail('user@example.com');
+    }
+  }, [location.state]);
+
+  useEffect(() => {
     // Timer countdown
     if (timer > 0) {
       const interval = setInterval(() => setTimer(t => t - 1), 1000);
       return () => clearInterval(interval);
     }
-  }, [timer, location.state]);
+  }, [timer]);
 
   const handleChange = (idx, value) => {
     if (!/^[0-9]?$/.test(value)) return;
@@ -43,7 +50,14 @@ function VerifyIdentity() {
   const handleSubmit = (e) => {
     e.preventDefault();
     // TODO: Verify code API
-    navigate('/dashboard');
+    const user = JSON.parse(localStorage.getItem('currentUser') || '{}');
+    const type = (user.userType || user.role || '').toLowerCase();
+
+    if (type === 'seller') {
+      navigate('/seller-dashboard');
+    } else {
+      navigate('/consumer-dashboard');
+    }
   };
 
   return (

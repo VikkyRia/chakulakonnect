@@ -179,95 +179,155 @@ function MyListings() {
                     ))}
                 </div>
 
-                <div className="bg-white rounded-[3rem] border border-slate-200/60 shadow-sm overflow-hidden">
+                <div className="bg-white rounded-[2rem] sm:rounded-[3rem] border border-slate-200/60 shadow-sm overflow-hidden">
                     {listings?.length === 0 ? (
-                        <div className="p-20 text-center">
-                            <div className="w-20 h-20 bg-slate-50 rounded-full flex items-center justify-center mx-auto mb-6 text-slate-200">
-                                <Package size={40} />
+                        <div className="p-10 sm:p-20 text-center">
+                            <div className="w-16 h-16 sm:w-20 sm:h-20 bg-slate-50 rounded-full flex items-center justify-center mx-auto mb-6 text-slate-200">
+                                <Package size={32} className="sm:size-[40px]" />
                             </div>
-                            <h3 className="text-lg font-black text-slate-900 mb-2">No Listings Found</h3>
-                            <p className="text-slate-400 text-sm mb-8">You haven't added any products to your shop yet.</p>
+                            <h3 className="text-base sm:text-lg font-black text-slate-900 mb-2">No Listings Found</h3>
+                            <p className="text-slate-400 text-xs sm:text-sm mb-8">You haven't added any products to your shop yet.</p>
                             <button
                                 onClick={() => navigate('/seller-dashboard/add')}
-                                className="px-8 py-3 bg-emerald-500 text-white rounded-xl font-black text-xs uppercase tracking-widest"
+                                className="px-6 sm:px-8 py-3 bg-emerald-500 text-white rounded-xl font-black text-[10px] sm:text-xs uppercase tracking-widest"
                             >
                                 Start Selling
                             </button>
                         </div>
                     ) : (
-                        <div className="overflow-x-auto">
-                            <table className="w-full text-left">
-                                <thead className="bg-slate-50 text-[10px] text-slate-400 uppercase tracking-widest font-black">
-                                    <tr>
-                                        <th className="px-8 py-6">Product</th>
-                                        <th className="px-8 py-6">Category</th>
-                                        <th className="px-8 py-6">Price</th>
-                                        <th className="px-8 py-6">Stock</th>
-                                        <th className="px-8 py-6 text-center">Actions</th>
-                                    </tr>
-                                </thead>
-                                <tbody className="divide-y divide-slate-100">
-                                    {listings?.map((item) => (
-                                        <tr key={item.id || item._id} className="group hover:bg-slate-50/50 transition-all">
-                                            <td className="px-8 py-6">
-                                                <div className="flex items-center gap-4">
-                                                    <div className="w-14 h-14 rounded-2xl bg-slate-100 overflow-hidden border border-slate-200 flex-shrink-0">
-                                                        {item.images?.[0] ? (
-                                                            <img src={item.images[0]} alt="" className="w-full h-full object-cover" />
-                                                        ) : (
-                                                            <div className="w-full h-full flex items-center justify-center text-slate-300">
-                                                                <Box size={20} />
-                                                            </div>
-                                                        )}
-                                                    </div>
-                                                    <div>
-                                                        <div className="font-black text-slate-900 group-hover:text-emerald-600 transition-colors uppercase tracking-tight">{item.name}</div>
-                                                        <div className="text-[10px] text-slate-400 font-bold uppercase tracking-widest mt-0.5">{item.location?.city}, {item.location?.state}</div>
-                                                    </div>
-                                                </div>
-                                            </td>
-                                            <td className="px-8 py-6">
-                                                <span className="px-3 py-1 bg-slate-100 rounded-full text-[9px] font-black text-slate-500 uppercase tracking-widest italic border border-slate-200">
-                                                    {item.category}
-                                                </span>
-                                            </td>
-                                            <td className="px-8 py-6 font-black text-slate-900">
-                                                ₦{Number(item.price).toLocaleString()}
-                                                <span className="text-[10px] text-slate-400 ml-1">/{item.unit}</span>
-                                            </td>
-                                            <td className="px-8 py-6">
-                                                <div className="flex flex-col gap-1.5">
-                                                    <span className={`text-xs font-bold ${item.quantity < 5 ? 'text-rose-500' : 'text-slate-600'}`}>{item.quantity} {item.unit}</span>
-                                                    <div className="w-24 h-1.5 bg-slate-100 rounded-full overflow-hidden">
-                                                        <div
-                                                            className={`h-full rounded-full ${item.quantity < 5 ? 'bg-rose-500' : 'bg-emerald-500'}`}
-                                                            style={{ width: `${Math.min(100, (item.quantity / 50) * 100)}%` }}
-                                                        ></div>
-                                                    </div>
-                                                </div>
-                                            </td>
-                                            <td className="px-8 py-6">
-                                                <div className="flex items-center justify-center gap-2">
-                                                    <button
-                                                        onClick={() => navigate(`/seller-dashboard/edit/${item.id || item._id}`)}
-                                                        className="p-3 bg-white border border-slate-200 rounded-xl text-slate-400 hover:text-emerald-500 hover:border-emerald-200 transition-all shadow-sm"
-                                                    >
-                                                        <Edit3 size={18} />
-                                                    </button>
-                                                    <button
-                                                        onClick={() => handleDelete(item.id || item._id)}
-                                                        disabled={deletingId === (item.id || item._id)}
-                                                        className="p-3 bg-white border border-slate-200 rounded-xl text-slate-400 hover:text-rose-500 hover:border-rose-200 transition-all shadow-sm disabled:opacity-50"
-                                                    >
-                                                        {deletingId === (item.id || item._id) ? <Loader2 size={18} className="animate-spin" /> : <Trash2 size={18} />}
-                                                    </button>
-                                                </div>
-                                            </td>
+                        <>
+                            {/* Desktop Table View */}
+                            <div className="hidden md:block overflow-x-auto">
+                                <table className="w-full text-left">
+                                    <thead className="bg-slate-50 text-[10px] text-slate-400 uppercase tracking-widest font-black">
+                                        <tr>
+                                            <th className="px-8 py-6">Product</th>
+                                            <th className="px-8 py-6">Category</th>
+                                            <th className="px-8 py-6">Price</th>
+                                            <th className="px-8 py-6">Stock</th>
+                                            <th className="px-8 py-6 text-center">Actions</th>
                                         </tr>
-                                    ))}
-                                </tbody>
-                            </table>
-                        </div>
+                                    </thead>
+                                    <tbody className="divide-y divide-slate-100">
+                                        {listings?.map((item) => (
+                                            <tr key={item.id || item._id} className="group hover:bg-slate-50/50 transition-all">
+                                                <td className="px-8 py-6">
+                                                    <div className="flex items-center gap-4">
+                                                        <div className="w-14 h-14 rounded-2xl bg-slate-100 overflow-hidden border border-slate-200 flex-shrink-0">
+                                                            {item.images?.[0] ? (
+                                                                <img src={item.images[0]} alt="" className="w-full h-full object-cover" />
+                                                            ) : (
+                                                                <div className="w-full h-full flex items-center justify-center text-slate-300">
+                                                                    <Box size={20} />
+                                                                </div>
+                                                            )}
+                                                        </div>
+                                                        <div>
+                                                            <div className="font-black text-slate-900 group-hover:text-emerald-600 transition-colors uppercase tracking-tight">{item.name}</div>
+                                                            <div className="text-[10px] text-slate-400 font-bold uppercase tracking-widest mt-0.5">{item.location?.city}, {item.location?.state}</div>
+                                                        </div>
+                                                    </div>
+                                                </td>
+                                                <td className="px-8 py-6">
+                                                    <span className="px-3 py-1 bg-slate-100 rounded-full text-[9px] font-black text-slate-500 uppercase tracking-widest italic border border-slate-200">
+                                                        {item.category}
+                                                    </span>
+                                                </td>
+                                                <td className="px-8 py-6 font-black text-slate-900">
+                                                    ₦{Number(item.price).toLocaleString()}
+                                                    <span className="text-[10px] text-slate-400 ml-1">/{item.unit}</span>
+                                                </td>
+                                                <td className="px-8 py-6">
+                                                    <div className="flex flex-col gap-1.5">
+                                                        <span className={`text-xs font-bold ${item.quantity < 5 ? 'text-rose-500' : 'text-slate-600'}`}>{item.quantity} {item.unit}</span>
+                                                        <div className="w-24 h-1.5 bg-slate-100 rounded-full overflow-hidden">
+                                                            <div
+                                                                className={`h-full rounded-full ${item.quantity < 5 ? 'bg-rose-500' : 'bg-emerald-500'}`}
+                                                                style={{ width: `${Math.min(100, (item.quantity / 50) * 100)}%` }}
+                                                            ></div>
+                                                        </div>
+                                                    </div>
+                                                </td>
+                                                <td className="px-8 py-6">
+                                                    <div className="flex items-center justify-center gap-2">
+                                                        <button
+                                                            onClick={() => navigate(`/seller-dashboard/edit/${item.id || item._id}`)}
+                                                            className="p-3 bg-white border border-slate-200 rounded-xl text-slate-400 hover:text-emerald-500 hover:border-emerald-200 transition-all shadow-sm"
+                                                        >
+                                                            <Edit3 size={18} />
+                                                        </button>
+                                                        <button
+                                                            onClick={() => handleDelete(item.id || item._id)}
+                                                            disabled={deletingId === (item.id || item._id)}
+                                                            className="p-3 bg-white border border-slate-200 rounded-xl text-slate-400 hover:text-rose-500 hover:border-rose-200 transition-all shadow-sm disabled:opacity-50"
+                                                        >
+                                                            {deletingId === (item.id || item._id) ? <Loader2 size={18} className="animate-spin" /> : <Trash2 size={18} />}
+                                                        </button>
+                                                    </div>
+                                                </td>
+                                            </tr>
+                                        ))}
+                                    </tbody>
+                                </table>
+                            </div>
+
+                            {/* Mobile Card View */}
+                            <div className="md:hidden divide-y divide-slate-100">
+                                {listings?.map((item) => (
+                                    <div key={item.id || item._id} className="p-6 space-y-4">
+                                        <div className="flex items-start gap-4">
+                                            <div className="w-20 h-20 rounded-2xl bg-slate-100 overflow-hidden border border-slate-200 flex-shrink-0">
+                                                {item.images?.[0] ? (
+                                                    <img src={item.images[0]} alt="" className="w-full h-full object-cover" />
+                                                ) : (
+                                                    <div className="w-full h-full flex items-center justify-center text-slate-300">
+                                                        <Box size={24} />
+                                                    </div>
+                                                )}
+                                            </div>
+                                            <div className="flex-1 min-w-0">
+                                                <div className="text-[10px] text-emerald-600 font-black uppercase tracking-widest mb-1">{item.category}</div>
+                                                <h4 className="font-black text-slate-900 uppercase tracking-tight text-sm truncate">{item.name}</h4>
+                                                <p className="text-[10px] text-slate-400 font-bold uppercase tracking-widest mt-0.5">{item.location?.city}, {item.location?.state}</p>
+                                                <div className="mt-2 font-black text-slate-900 text-base">
+                                                    ₦{Number(item.price).toLocaleString()}
+                                                    <span className="text-[10px] text-slate-400 ml-1">/{item.unit}</span>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <div className="flex items-center justify-between pt-2">
+                                            <div className="flex flex-col gap-1">
+                                                <span className={`text-[10px] font-black uppercase tracking-widest ${item.quantity < 5 ? 'text-rose-500' : 'text-slate-400'}`}>
+                                                    Stock: {item.quantity} {item.unit}
+                                                </span>
+                                                <div className="w-24 h-1 bg-slate-100 rounded-full overflow-hidden">
+                                                    <div
+                                                        className={`h-full rounded-full ${item.quantity < 5 ? 'bg-rose-500' : 'bg-emerald-500'}`}
+                                                        style={{ width: `${Math.min(100, (item.quantity / 50) * 100)}%` }}
+                                                    ></div>
+                                                </div>
+                                            </div>
+                                            <div className="flex gap-2">
+                                                <button
+                                                    onClick={() => navigate(`/seller-dashboard/edit/${item.id || item._id}`)}
+                                                    className="p-2.5 bg-slate-50 border border-slate-100 rounded-xl text-slate-500 active:bg-emerald-500 active:text-white transition-colors"
+                                                >
+                                                    <Edit3 size={16} />
+                                                </button>
+                                                <button
+                                                    onClick={() => handleDelete(item.id || item._id)}
+                                                    disabled={deletingId === (item.id || item._id)}
+                                                    className="p-2.5 bg-slate-50 border border-slate-100 rounded-xl text-slate-500 active:bg-rose-500 active:text-white transition-colors"
+                                                >
+                                                    {deletingId === (item.id || item._id) ? <Loader2 size={16} className="animate-spin" /> : <Trash2 size={16} />}
+                                                </button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                ))}
+                            </div>
+                        </>
                     )}
                 </div>
             </main>
